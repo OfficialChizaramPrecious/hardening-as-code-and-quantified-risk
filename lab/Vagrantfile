@@ -8,7 +8,7 @@
     config.vm.define name do |node|
       node.vm.box = settings[:box]
       node.vm.hostname = "nf-grc-a4-#{name}"
-      node.vm.network "private_network", ip: settings[:ip]
+      # node.vm.network "private_network", ip: settings[:ip]  # DL-003: host-only adapter unavailable
       node.vm.provider "virtualbox" do |provider|
         provider.memory = 2048
         provider.cpus = 2
@@ -17,4 +17,5 @@
     end
   end
 end
+
 
