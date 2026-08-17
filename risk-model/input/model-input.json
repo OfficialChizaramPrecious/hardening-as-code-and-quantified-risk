@@ -1,0 +1,14 @@
+"assets": [
+  {"asset_id": "A-01", "name": "edge-lab-07", "role": "ephemeral QA scanner", "criticality": "low", "environment": "test", "estimated_records": 0, "annual_revenue_dependency_usd": 0},
+  {"asset_id": "A-02", "name": "payroll-api-01", "role": "payroll API", "criticality": "crown-jewel", "environment": "production", "estimated_records": 18400, "annual_revenue_dependency_usd": 4200000},
+  {"asset_id": "A-03", "name": "vpn-gw-01", "role": "remote access gateway", "criticality": "high", "environment": "production", "estimated_records": 0, "annual_revenue_dependency_usd": 3100000},
+  {"asset_id": "A-04", "name": "files-01", "role": "customer attachments", "criticality": "crown-jewel", "environment": "production", "estimated_records": 920000, "annual_revenue_dependency_usd": 1800000},
+  {"asset_id": "A-05", "name": "helpdesk-02", "role": "support workstation", "criticality": "medium", "environment": "production", "estimated_records": 0, "annual_revenue_dependency_usd": 600000},
+  {"asset_id": "A-06", "name": "backup-01", "role": "backup coordinator", "criticality": "crown-jewel", "environment": "production", "estimated_records": 920000, "annual_revenue_dependency_usd": 5200000},
+  {"asset_id": "A-07", "name": "marketing-old", "role": "retired CMS", "criticality": "low", "environment": "quarantine", "estimated_records": 0, "annual_revenue_dependency_usd": 0},
+  {"asset_id": "A-08", "name": "idp-01", "role": "identity provider", "criticality": "crown-jewel", "environment": "production", "estimated_records": 18400, "annual_revenue_dependency_usd": 8100000},
+  {"asset_id": "A-09", "name": "dev-git-01", "role": "source repository", "criticality": "high", "environment": "production", "estimated_records": 0, "annual_revenue_dependency_usd": 3600000},
+  {"asset_id": "A-10", "name": "dns-01", "role": "internal DNS", "criticality": "high", "environment": "production", "estimated_records": 0, "annual_revenue_dependency_usd": 1400000},
+  {"asset_id": "A-11", "name": "db-reporting", "role": "reporting replica", "criticality": "medium", "environment": "production", "estimated_records": 220000, "annual_revenue_dependency_usd": 900000},
+  {"asset_id": "A-12", "name": "print-03", "role": "office printer", "criticality": "low", "environment": "office", "estimated_records": 0, "annual_revenue_dependency_usd": 0}
+]
