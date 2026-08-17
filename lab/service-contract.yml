@@ -1,0 +1,19 @@
+schema_version: "1.0"
+services:
+  - id: web
+    command: curl --fail --silent http://127.0.0.1:8080/
+    required_contains: synthetic-service-marker=
+  - id: audit
+    command: systemctl is-active auditd
+    required_exit: 0
+  - id: time
+    command: systemctl is-active chronyd || systemctl is-active chrony
+    required_exit: 0
+  - id: ssh-effective
+    command: sshd -T
+    required_contains: port 22
+forbidden_regressions:
+  - disabling the synthetic web service
+  - disabling audit collection
+  - removing time synchronization
+  - opening a new listening port
