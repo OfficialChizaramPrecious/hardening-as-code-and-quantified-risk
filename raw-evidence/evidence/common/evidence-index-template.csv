@@ -1,0 +1,2 @@
+claim_id,report_section,claim,artifact_path,exact_locator,collection_time_utc,sha256,proves,does_not_prove,confidence,alternative_considered,disposition
+C-001,,,,,,,,high,,,

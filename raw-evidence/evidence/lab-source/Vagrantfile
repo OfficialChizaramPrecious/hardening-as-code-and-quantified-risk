@@ -1,0 +1,19 @@
+Vagrant.configure("2") do |config|
+  config.vm.synced_folder ".", "/vagrant", disabled: false
+
+  {
+    "debian" => { box: "generic/debian12", ip: "192.168.84.21" },
+    "rocky" => { box: "generic/rocky9", ip: "192.168.84.22" }
+  }.each do |name, settings|
+    config.vm.define name do |node|
+      node.vm.box = settings[:box]
+      node.vm.hostname = "nf-grc-a4-#{name}"
+      node.vm.network "private_network", ip: settings[:ip]
+      node.vm.provider "virtualbox" do |provider|
+        provider.memory = 2048
+        provider.cpus = 2
+      end
+      node.vm.provision "shell", path: "baseline.sh", args: [name]
+    end
+  end
+end

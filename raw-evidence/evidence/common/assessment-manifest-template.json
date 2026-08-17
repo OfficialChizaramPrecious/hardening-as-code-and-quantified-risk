@@ -1,0 +1,35 @@
+{
+  "schema_version": "1.0",
+  "project_id": "SOC-A1",
+  "variant": "V1",
+  "candidate_binding": "from-assigned-participant-pack",
+  "assigned_pack": {
+    "file_name": "",
+    "sha256": "",
+    "manifest_signature": "",
+    "verified_before_use": false
+  },
+  "commit": "40-character-git-commit",
+  "supported_environment": {
+    "os": "",
+    "cpu": "",
+    "memory_gb": 0,
+    "tool_versions": {}
+  },
+  "commands": {
+    "provision": "",
+    "build": "",
+    "test": "",
+    "clean": ""
+  },
+  "results": {
+    "public_tests": { "passed": 0, "failed": 0, "report": "" },
+    "runtime_seconds": 0,
+    "peak_memory_mb": 0,
+    "output_hashes": {}
+  },
+  "inputs": [],
+  "outputs": [],
+  "manual_preconditions": [],
+  "known_limitations": []
+}

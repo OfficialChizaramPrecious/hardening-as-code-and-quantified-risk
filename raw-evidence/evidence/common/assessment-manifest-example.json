@@ -1,0 +1,44 @@
+{
+  "example_notice": "FICTIONAL STRUCTURE EXAMPLE ONLY - DO NOT SUBMIT THESE VALUES",
+  "schema_version": "1.0",
+  "project_id": "DEMO-ONLY",
+  "variant": "DEMO",
+  "candidate_binding": "DEMO-PARTICIPANT",
+  "assigned_pack": {
+    "file_name": "demo-fixture.tar.zst",
+    "sha256": "REPLACE-WITH-THE-ASSIGNED-PACK-SHA256",
+    "manifest_signature": "REPLACE-WITH-THE-STAFF-SIGNATURE",
+    "verified_before_use": true
+  },
+  "commit": "REPLACE-WITH-THE-FROZEN-40-CHARACTER-COMMIT",
+  "supported_environment": {
+    "os": "Example Linux 1.0",
+    "cpu": "4 example cores",
+    "memory_gb": 8,
+    "tool_versions": {
+      "example-tool": "1.2.3"
+    }
+  },
+  "commands": {
+    "provision": "make demo-provision",
+    "build": "make demo-build",
+    "test": "make demo-test",
+    "clean": "make demo-clean"
+  },
+  "results": {
+    "public_tests": {
+      "passed": 3,
+      "failed": 0,
+      "report": "examples/demo/test-results.xml"
+    },
+    "runtime_seconds": 12,
+    "peak_memory_mb": 256,
+    "output_hashes": {
+      "examples/demo/result.json": "REPLACE-WITH-THE-ACTUAL-OUTPUT-SHA256"
+    }
+  },
+  "inputs": ["examples/demo/public-fixture.json"],
+  "outputs": ["examples/demo/result.json"],
+  "manual_preconditions": ["This is a teaching example, not an assigned-case prerequisite."],
+  "known_limitations": ["The example does not contain project answers, private identifiers, or a passing submission."]
+}
