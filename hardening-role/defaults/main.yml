@@ -1,0 +1,118 @@
+---
+# Hardening role - every tunable value lives here.
+#
+# No task in this role contains a literal path, mode, owner, or setting value.
+# That is what allows a control to be adjusted without editing task logic,
+# which the recorded defense requires.
+#
+# Values marked SERVICE-CRITICAL must not be changed without re-running the
+# service acceptance suite: they are the parameters that keep the declared
+# services green while the control is still applied.
+
+# ---------------------------------------------------------------------------
+# HR-001 / HR-002 - SSH configuration
+# ---------------------------------------------------------------------------
+netforge_ssh_dropin_path: /etc/ssh/sshd_config.d/90-netforge-baseline.conf
+netforge_ssh_dropin_mode: "0600"
+
+netforge_ssh_permit_root_login: "no"
+netforge_ssh_password_authentication: "no"
+netforge_ssh_permit_empty_passwords: "no"
+
+# SERVICE-CRITICAL: service-contract.yml requires "port 22" in sshd -T.
+netforge_ssh_port: 22
+
+# ---------------------------------------------------------------------------
+# HR-003 - Web content permissions
+# ---------------------------------------------------------------------------
+# SERVICE-CRITICAL: nginx runs as netforge_web_owner and must retain read
+# access. A stricter mode or a different owner breaks the 'web' check.
+netforge_web_root: /srv/netforge-service
+netforge_web_index: /srv/netforge-service/index.html
+netforge_web_owner: nginx
+netforge_web_group: nginx
+netforge_web_file_mode: "0644"
+netforge_web_dir_mode: "0755"
+netforge_web_selinux_type: httpd_sys_content_t
+
+# ---------------------------------------------------------------------------
+# HR-004 - Core dumps
+# ---------------------------------------------------------------------------
+netforge_limits_path: /etc/security/limits.d/90-netforge-baseline.conf
+netforge_limits_mode: "0644"
+netforge_core_hard_limit: 0
+
+netforge_coredump_conf_path: /etc/systemd/coredump.conf
+netforge_coredump_storage: none
+netforge_coredump_process_size_max: 0
+
+# ---------------------------------------------------------------------------
+# HR-005 to HR-008 - Kernel parameters
+# ---------------------------------------------------------------------------
+# Persisted so the values survive reboot. HR-007 and HR-008 already read
+# correctly in the running kernel; the control gap is durability.
+netforge_sysctl_file: /etc/sysctl.d/60-netforge-hardening.conf
+
+netforge_sysctl_settings:
+  net.ipv4.conf.all.accept_redirects: 0
+  net.ipv4.conf.default.accept_redirects: 0
+  net.ipv4.conf.all.send_redirects: 0
+  net.ipv4.conf.default.send_redirects: 0
+  kernel.randomize_va_space: 2
+  net.ipv4.tcp_syncookies: 1
+
+# ---------------------------------------------------------------------------
+# HR-009 - Login banners
+# ---------------------------------------------------------------------------
+netforge_banner_paths:
+  - /etc/issue
+  - /etc/issue.net
+netforge_banner_mode: "0644"
+netforge_banner_text: |
+  Authorized use only. All activity may be monitored and reported.
+
+# ---------------------------------------------------------------------------
+# HR-010 - Default umask
+# ---------------------------------------------------------------------------
+netforge_login_defs_path: /etc/login.defs
+netforge_umask: "027"
+
+# ---------------------------------------------------------------------------
+# HR-011 - Firewalld loopback handling  (SERVICE CONFLICT CONTROL)
+# ---------------------------------------------------------------------------
+# The control has two sides. Trusting lo keeps loopback working, which the
+# 'web' check depends on. Restricting spoofed loopback sources on other
+# interfaces is the anti-spoofing half the rule actually asks for.
+#
+# SERVICE-CRITICAL: removing "lo" from netforge_firewall_trusted_interfaces,
+# or applying the drop rules to the trusted zone, blocks
+# curl http://127.0.0.1:8080/ and constitutes a forbidden regression.
+netforge_firewall_manage: true
+netforge_firewall_trusted_interfaces:
+  - lo
+netforge_firewall_external_zone: public
+netforge_firewall_spoofed_sources:
+  - 127.0.0.0/8
+  - "::1"
+
+# ---------------------------------------------------------------------------
+# Control toggles
+# ---------------------------------------------------------------------------
+# Each control can be applied independently. The brief requires changes to be
+# applied one at a time with service tests between, and these support that
+# without editing tasks.
+netforge_apply_ssh: true
+netforge_apply_web_permissions: true
+netforge_apply_coredump: true
+netforge_apply_sysctl: true
+netforge_apply_banners: true
+netforge_apply_umask: true
+netforge_apply_firewall: true
+
+# ---------------------------------------------------------------------------
+# Not remediated - see remediations.yml HR-FP-001
+# ---------------------------------------------------------------------------
+# package_nginx_removed is a false positive on this host. nginx is the declared
+# workload. This role must never remove it; the flag exists so the intent is
+# explicit in code rather than implied by absence.
+netforge_remove_nginx: false

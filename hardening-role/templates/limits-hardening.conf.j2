@@ -1,0 +1,7 @@
+# Managed by the netforge hardening role. Do not edit by hand.
+# Rendered {{ ansible_managed }}
+#
+# Remediates HR-004. The baseline shipped this same path with
+# "* soft core unlimited".
+
+* hard core {{ netforge_core_hard_limit }}

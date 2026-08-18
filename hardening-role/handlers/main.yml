@@ -1,0 +1,25 @@
+---
+# Handlers fire only when a task reports changed. That is what keeps the second
+# playbook run at changed=0: on an already-hardened host nothing changes, so no
+# handler runs.
+#
+# sshd is validated before restart. A malformed drop-in that passes templating
+# but fails sshd's own parser would otherwise lock the host out on restart.
+
+- name: validate sshd configuration
+  ansible.builtin.command:
+    cmd: /usr/sbin/sshd -t
+  changed_when: false
+  listen: restart sshd
+
+- name: restart sshd
+  ansible.builtin.service:
+    name: sshd
+    state: restarted
+  listen: restart sshd
+
+- name: reload firewalld
+  ansible.builtin.service:
+    name: firewalld
+    state: reloaded
+  listen: reload firewalld

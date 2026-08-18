@@ -1,0 +1,188 @@
+---
+# Netforge hardening role.
+#
+# Every task expresses desired state, not an action. No command or shell task
+# modifies the system, so a second run has nothing to do and reports changed=0.
+#
+# Each control is guarded by a toggle from defaults/main.yml and tagged, so the
+# brief's requirement to "apply changes one at a time, rerun service tests, and
+# record regressions" can be met without editing this file.
+
+# ---------------------------------------------------------------------------
+# HR-001 / HR-002 - SSH
+# ---------------------------------------------------------------------------
+- name: HR-001/002 - harden sshd drop-in configuration
+  ansible.builtin.template:
+    src: sshd-hardening.conf.j2
+    dest: "{{ netforge_ssh_dropin_path }}"
+    owner: root
+    group: root
+    mode: "{{ netforge_ssh_dropin_mode }}"
+    validate: /usr/sbin/sshd -t -f %s
+  become: true
+  when: netforge_apply_ssh | bool
+  notify: restart sshd
+  tags: [hr-001, hr-002, ssh]
+
+# ---------------------------------------------------------------------------
+# HR-003 - Web content permissions  (parameterised, service-critical)
+# ---------------------------------------------------------------------------
+- name: HR-003 - set web root ownership and mode
+  ansible.builtin.file:
+    path: "{{ netforge_web_root }}"
+    state: directory
+    owner: "{{ netforge_web_owner }}"
+    group: "{{ netforge_web_group }}"
+    mode: "{{ netforge_web_dir_mode }}"
+    setype: "{{ netforge_web_selinux_type }}"
+  become: true
+  when: netforge_apply_web_permissions | bool
+  tags: [hr-003, web]
+
+- name: HR-003 - remove world-writable bit from web content
+  ansible.builtin.file:
+    path: "{{ netforge_web_index }}"
+    state: file
+    owner: "{{ netforge_web_owner }}"
+    group: "{{ netforge_web_group }}"
+    mode: "{{ netforge_web_file_mode }}"
+    setype: "{{ netforge_web_selinux_type }}"
+  become: true
+  when: netforge_apply_web_permissions | bool
+  tags: [hr-003, web]
+
+# ---------------------------------------------------------------------------
+# HR-004 - Core dumps
+# ---------------------------------------------------------------------------
+- name: HR-004 - restrict core dump limits
+  ansible.builtin.template:
+    src: limits-hardening.conf.j2
+    dest: "{{ netforge_limits_path }}"
+    owner: root
+    group: root
+    mode: "{{ netforge_limits_mode }}"
+  become: true
+  when: netforge_apply_coredump | bool
+  tags: [hr-004, coredump]
+
+- name: HR-004 - disable systemd coredump storage
+  ansible.builtin.lineinfile:
+    path: "{{ netforge_coredump_conf_path }}"
+    regexp: '^\s*#?\s*Storage\s*='
+    line: "Storage={{ netforge_coredump_storage }}"
+    insertafter: '^\[Coredump\]'
+    owner: root
+    group: root
+    mode: "0644"
+  become: true
+  when: netforge_apply_coredump | bool
+  tags: [hr-004, coredump]
+
+- name: HR-004 - disable systemd coredump backtraces
+  ansible.builtin.lineinfile:
+    path: "{{ netforge_coredump_conf_path }}"
+    regexp: '^\s*#?\s*ProcessSizeMax\s*='
+    line: "ProcessSizeMax={{ netforge_coredump_process_size_max }}"
+    insertafter: '^\[Coredump\]'
+    owner: root
+    group: root
+    mode: "0644"
+  become: true
+  when: netforge_apply_coredump | bool
+  tags: [hr-004, coredump]
+
+# ---------------------------------------------------------------------------
+# HR-005 to HR-008 - Kernel parameters, persisted
+# ---------------------------------------------------------------------------
+- name: HR-005/006/007/008 - apply and persist kernel parameters
+  ansible.posix.sysctl:
+    name: "{{ item.key }}"
+    value: "{{ item.value }}"
+    sysctl_file: "{{ netforge_sysctl_file }}"
+    sysctl_set: true
+    state: present
+    reload: true
+  become: true
+  loop: "{{ netforge_sysctl_settings | dict2items }}"
+  loop_control:
+    label: "{{ item.key }}"
+  when: netforge_apply_sysctl | bool
+  tags: [hr-005, hr-006, hr-007, hr-008, sysctl]
+
+# ---------------------------------------------------------------------------
+# HR-009 - Login banners
+# ---------------------------------------------------------------------------
+- name: HR-009 - install login banners
+  ansible.builtin.template:
+    src: banner.j2
+    dest: "{{ item }}"
+    owner: root
+    group: root
+    mode: "{{ netforge_banner_mode }}"
+  become: true
+  loop: "{{ netforge_banner_paths }}"
+  when: netforge_apply_banners | bool
+  tags: [hr-009, banner]
+
+# ---------------------------------------------------------------------------
+# HR-010 - Default umask
+# ---------------------------------------------------------------------------
+- name: HR-010 - set default umask in login.defs
+  ansible.builtin.lineinfile:
+    path: "{{ netforge_login_defs_path }}"
+    regexp: '^\s*UMASK\s+'
+    line: "UMASK\t\t{{ netforge_umask }}"
+    owner: root
+    group: root
+    mode: "0644"
+  become: true
+  when: netforge_apply_umask | bool
+  tags: [hr-010, umask]
+
+# ---------------------------------------------------------------------------
+# HR-011 - Firewalld loopback handling  (SERVICE CONFLICT CONTROL)
+# ---------------------------------------------------------------------------
+# Two-sided by design. Trusting lo preserves the loopback path the 'web' check
+# depends on. Dropping spoofed loopback sources on the external zone is the
+# anti-spoofing half the rule asks for. Applying only the second half breaks
+# the declared service.
+- name: HR-011 - ensure firewalld is running
+  ansible.builtin.service:
+    name: firewalld
+    state: started
+    enabled: true
+  become: true
+  when:
+    - netforge_apply_firewall | bool
+    - netforge_firewall_manage | bool
+  tags: [hr-011, firewall]
+
+- name: HR-011 - trust the loopback interface
+  ansible.posix.firewalld:
+    zone: trusted
+    interface: "{{ item }}"
+    permanent: true
+    immediate: true
+    state: enabled
+  become: true
+  loop: "{{ netforge_firewall_trusted_interfaces }}"
+  when:
+    - netforge_apply_firewall | bool
+    - netforge_firewall_manage | bool
+  notify: reload firewalld
+  tags: [hr-011, firewall]
+
+- name: HR-011 - drop spoofed loopback sources on the external zone
+  ansible.posix.firewalld:
+    zone: "{{ netforge_firewall_external_zone }}"
+    rich_rule: "rule family={{ 'ipv6' if ':' in item else 'ipv4' }} source address={{ item }} drop"
+    permanent: true
+    immediate: true
+    state: enabled
+  become: true
+  loop: "{{ netforge_firewall_spoofed_sources }}"
+  when:
+    - netforge_apply_firewall | bool
+    - netforge_firewall_manage | bool
+  notify: reload firewalld
+  tags: [hr-011, firewall]

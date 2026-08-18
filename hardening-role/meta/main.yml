@@ -1,0 +1,17 @@
+---
+galaxy_info:
+  role_name: netforge_hardening
+  description: >
+    CIS Level 1 Server hardening for the assigned Rocky Linux 9 host, applied
+    as reversible code with declared parameters.
+  license: proprietary
+  min_ansible_version: "2.14"
+  platforms:
+    - name: EL
+      versions:
+        - "9"
+
+collections:
+  - ansible.posix
+
+dependencies: []

@@ -1,0 +1,25 @@
+---
+# Entry point for the hardening role.
+#
+# Runs against localhost with a local connection: the control node is the
+# managed host. This is deliberate - the assigned lab is a single VM, and it
+# removes SSH from the change path so that hardening sshd cannot interrupt the
+# run that is hardening it.
+#
+# Apply everything:
+#   ansible-playbook site.yml
+#
+# Apply one control at a time, as the brief requires:
+#   ansible-playbook site.yml --tags hr-001
+#
+# Prove idempotence:
+#   ansible-playbook site.yml   # second run must report changed=0
+
+- name: Apply netforge host hardening
+  hosts: localhost
+  connection: local
+  become: true
+  gather_facts: true
+
+  roles:
+    - role: hardening-role

@@ -1,0 +1,13 @@
+# Managed by the netforge hardening role. Do not edit by hand.
+# Rendered {{ ansible_managed }}
+#
+# Remediates HR-001, HR-002. The baseline shipped this same path with
+# PermitRootLogin yes and PasswordAuthentication yes.
+#
+# Port is declared explicitly because service-contract.yml requires
+# "port {{ netforge_ssh_port }}" to appear in sshd -T output.
+
+Port {{ netforge_ssh_port }}
+PermitRootLogin {{ netforge_ssh_permit_root_login }}
+PasswordAuthentication {{ netforge_ssh_password_authentication }}
+PermitEmptyPasswords {{ netforge_ssh_permit_empty_passwords }}
