@@ -1,0 +1,356 @@
+# Stage 8 - Remediation design
+#
+# Intern UBI-2026-0099 / set D5 / marker UBI-A8-0725D08E95BE
+# Host: Rocky Linux 9.3, kernel 5.14.0-362.13.1.el9_3
+# Data stream: /usr/share/xml/scap/ssg/content/ssg-rl9-ds.xml
+# Profile:     xccdf_org.ssgproject.content_profile_cis_server_l1
+#
+# Baseline: 101 fail / 159 pass / 33 notapplicable / 0 error
+#           Lynis hardening index 66, 39 suggestions
+#
+# Every precheck below was verified against the live baseline host before this
+# file was finalised. Four entries were corrected as a result; see
+# design_corrections at the end.
+
+schema_version: "1.0"
+
+baseline:
+  oscap_fail: 101
+  oscap_pass: 159
+  oscap_notapplicable: 33
+  oscap_error: 0
+  lynis_hardening_index: 66
+  lynis_suggestions: 39
+  prechecks_verified_utc: "2026-08-18"
+
+remediations:
+
+  - id: HR-001
+    finding: SSH permits direct root login
+    planted_defect: true
+    scanner_ref:
+      oscap: xccdf_org.ssgproject.content_rule_sshd_disable_root_login
+      lynis: SSH-7408
+    source: /etc/ssh/sshd_config.d/90-netforge-baseline.conf
+    verified_baseline: "sudo sshd -T reports 'permitrootlogin yes'"
+    desired_state: "PermitRootLogin no"
+    verify_precheck: "sudo sshd -T | grep -i permitrootlogin"
+    change: template 90-netforge-baseline.conf with hardened directives
+    handler: restart sshd
+    service_risk: >
+      None. The vagrant account has sudo and authenticates by key. Root login
+      is not used by any declared service. ssh-effective only requires
+      "port 22" in sshd -T, which is unaffected.
+    rollback: restore the baseline template (PermitRootLogin yes)
+    acceptance_test: test_sshd_root_login_disabled
+    expected_scanner_effect: sshd_disable_root_login moves fail -> pass
+
+  - id: HR-002
+    finding: SSH permits password authentication
+    planted_defect: true
+    scanner_ref:
+      oscap: xccdf_org.ssgproject.content_rule_sshd_disable_empty_passwords
+      lynis: SSH-7408
+    source: /etc/ssh/sshd_config.d/90-netforge-baseline.conf
+    verified_baseline: >
+      sudo sshd -T reports 'passwordauthentication yes' and
+      'permitemptypasswords no'. PermitEmptyPasswords is already correct at
+      the effective level; the scanner rule fails because the directive is not
+      declared explicitly in configuration. Both are therefore written.
+    desired_state: "PasswordAuthentication no; PermitEmptyPasswords no (explicit)"
+    verify_precheck: "sudo sshd -T | grep -Ei 'passwordauthentication|permitemptypasswords'"
+    change: same template as HR-001, additional directives
+    handler: restart sshd
+    service_risk: >
+      None. Vagrant provisioned a generated keypair and connects by key only.
+      Keep a second SSH session open during the first apply as a safeguard.
+    rollback: restore the baseline template
+    acceptance_test: test_sshd_password_auth_disabled
+    expected_scanner_effect: sshd_disable_empty_passwords moves fail -> pass
+
+  - id: HR-003
+    finding: World-writable web content
+    planted_defect: true
+    scanner_ref:
+      oscap: xccdf_org.ssgproject.content_rule_file_permissions_unauthorized_world_writable
+      lynis: FILE-7524
+    source: /srv/netforge-service/index.html
+    verified_baseline: "stat reports '666 nginx nginx'"
+    desired_state: "mode 0644, owner nginx, group nginx"
+    verify_precheck: "stat -c '%a %U %G' /srv/netforge-service/index.html"
+    change: ansible.builtin.file with parameterised owner and mode
+    handler: none
+    service_risk: >
+      HIGH IF HARD-CODED. nginx runs as the nginx user and must retain read
+      access. mode 0600, chown root:root, or a blanket chmod 0640 across /srv
+      all break the web check. The rule's own rationale states that files
+      "can be configured using a combination of user and group permissions to
+      support whatever legitimate access is needed" - so the control is applied
+      with parameters, not a blanket lockdown.
+      SELinux context httpd_sys_content_t must also be preserved (see DL-004).
+    parameters:
+      netforge_web_root: /srv/netforge-service
+      netforge_web_owner: nginx
+      netforge_web_file_mode: "0644"
+    rollback: restore mode 0666, owner nginx
+    acceptance_test: test_web_content_not_world_writable AND test_web_service_responds
+    expected_scanner_effect: file_permissions_unauthorized_world_writable moves fail -> pass
+
+  - id: HR-004
+    finding: Core dumps unrestricted
+    planted_defect: true
+    scanner_ref:
+      oscap:
+        - xccdf_org.ssgproject.content_rule_coredump_disable_storage
+        - xccdf_org.ssgproject.content_rule_coredump_disable_backtraces
+    source:
+      - /etc/security/limits.d/90-netforge-baseline.conf
+      - /etc/systemd/coredump.conf
+    verified_baseline: "limits.d contains '* soft core unlimited'"
+    desired_state: >
+      limits.d sets '* hard core 0'; coredump.conf sets Storage=none and
+      ProcessSizeMax=0
+    verify_precheck: "cat /etc/security/limits.d/90-netforge-baseline.conf; grep -E '^(Storage|ProcessSizeMax)' /etc/systemd/coredump.conf 2>/dev/null || echo 'coredump.conf unset'"
+    change: template both files
+    handler: none required for limits; systemd reads coredump.conf per dump
+    service_risk: None. No declared service depends on producing core dumps.
+    rollback: restore '* soft core unlimited', remove coredump.conf settings
+    acceptance_test: test_core_dumps_disabled
+    expected_scanner_effect: both coredump rules move fail -> pass
+
+  - id: HR-005
+    finding: ICMP redirects accepted, and not persisted
+    planted_defect: true
+    scanner_ref:
+      oscap:
+        - xccdf_org.ssgproject.content_rule_sysctl_net_ipv4_conf_all_accept_redirects
+        - xccdf_org.ssgproject.content_rule_sysctl_net_ipv4_conf_default_accept_redirects
+      lynis: KRNL-6000
+    verified_baseline: >
+      net.ipv4.conf.all.accept_redirects = 1 at runtime. Set by baseline.sh
+      with 'sysctl -w' only. /etc/sysctl.d/ contains no entry for this key, so
+      the setting does not survive a reboot. Note in the write-up: a naive
+      before/after comparison across a reboot would show this "fixed" with no
+      work performed.
+    desired_state: "accept_redirects = 0 for all and default, persisted in /etc/sysctl.d/"
+    verify_precheck: "sysctl net.ipv4.conf.all.accept_redirects net.ipv4.conf.default.accept_redirects; grep -r accept_redirects /etc/sysctl.conf /etc/sysctl.d/ 2>/dev/null || echo 'not persisted'"
+    change: ansible.posix.sysctl with sysctl_file and reload
+    handler: none - the module reloads
+    service_risk: >
+      None. Loopback and NAT traffic for the declared services do not rely on
+      accepting ICMP redirects.
+    rollback: restore value 1 and remove the persisted file
+    acceptance_test: test_accept_redirects_disabled_and_persisted
+    expected_scanner_effect: both accept_redirects rules move fail -> pass
+
+  - id: HR-006
+    finding: ICMP redirects sent, and not persisted
+    scanner_ref:
+      oscap:
+        - xccdf_org.ssgproject.content_rule_sysctl_net_ipv4_conf_all_send_redirects
+        - xccdf_org.ssgproject.content_rule_sysctl_net_ipv4_conf_default_send_redirects
+    verified_baseline: "net.ipv4.conf.all.send_redirects = 1 at runtime, not persisted"
+    desired_state: "send_redirects = 0 for all and default, persisted"
+    verify_precheck: "sysctl net.ipv4.conf.all.send_redirects net.ipv4.conf.default.send_redirects"
+    change: ansible.posix.sysctl
+    handler: none
+    service_risk: None. The host is not a router.
+    rollback: restore baseline values
+    acceptance_test: test_send_redirects_disabled_and_persisted
+    expected_scanner_effect: both send_redirects rules move fail -> pass
+
+  - id: HR-007
+    finding: ASLR setting is correct at runtime but not persisted
+    scanner_ref:
+      oscap: xccdf_org.ssgproject.content_rule_sysctl_kernel_randomize_va_space
+    verified_baseline: >
+      CORRECTED AFTER VERIFICATION. kernel.randomize_va_space already reads 2
+      in the running kernel, so the original precheck ("value is not 2") was
+      wrong. The rule fails because no file under /etc/sysctl.d/ declares the
+      value. The control gap is durability: nothing guarantees the setting
+      after a reboot or after another package writes a conflicting value.
+    desired_state: "kernel.randomize_va_space = 2, declared in /etc/sysctl.d/"
+    verify_precheck: "sysctl kernel.randomize_va_space; grep -r randomize_va_space /etc/sysctl.conf /etc/sysctl.d/ 2>/dev/null || echo 'not persisted'"
+    change: ansible.posix.sysctl with sysctl_file
+    handler: none
+    service_risk: None.
+    rollback: remove the persisted declaration
+    acceptance_test: test_aslr_persisted
+    expected_scanner_effect: sysctl_kernel_randomize_va_space moves fail -> pass
+
+  - id: HR-008
+    finding: TCP SYN cookies enabled at runtime but not persisted
+    scanner_ref:
+      oscap: xccdf_org.ssgproject.content_rule_sysctl_net_ipv4_tcp_syncookies
+    verified_baseline: >
+      CORRECTED AFTER VERIFICATION. net.ipv4.tcp_syncookies already reads 1 in
+      the running kernel. As with HR-007, the finding is absence of a persisted
+      declaration, not an incorrect runtime value.
+    desired_state: "net.ipv4.tcp_syncookies = 1, declared in /etc/sysctl.d/"
+    verify_precheck: "sysctl net.ipv4.tcp_syncookies; grep -r syncookies /etc/sysctl.conf /etc/sysctl.d/ 2>/dev/null || echo 'not persisted'"
+    change: ansible.posix.sysctl with sysctl_file
+    handler: none
+    service_risk: None. SYN cookies engage only under SYN flood conditions.
+    rollback: remove the persisted declaration
+    acceptance_test: test_tcp_syncookies_persisted
+    expected_scanner_effect: sysctl_net_ipv4_tcp_syncookies moves fail -> pass
+
+  - id: HR-009
+    finding: No legal warning banner
+    scanner_ref:
+      oscap:
+        - xccdf_org.ssgproject.content_rule_banner_etc_issue_cis
+        - xccdf_org.ssgproject.content_rule_banner_etc_issue_net_cis
+      lynis:
+        - BANN-7126
+        - BANN-7130
+    source:
+      - /etc/issue
+      - /etc/issue.net
+    desired_state: both files carry an authorised-use banner
+    verify_precheck: "cat /etc/issue /etc/issue.net"
+    change: template both files from one variable
+    handler: none
+    service_risk: >
+      None. The banner is displayed pre-authentication and does not alter
+      sshd's effective port or any declared check.
+    rollback: restore baseline contents
+    acceptance_test: test_login_banners_present
+    expected_scanner_effect: both banner rules move fail -> pass
+
+  - id: HR-010
+    finding: Default umask too permissive
+    scanner_ref:
+      oscap: xccdf_org.ssgproject.content_rule_accounts_umask_etc_login_defs
+      lynis: AUTH-9328
+    source: /etc/login.defs
+    verified_baseline: "grep reports 'UMASK           022'"
+    desired_state: "UMASK 027"
+    verify_precheck: "grep -E '^\\s*UMASK' /etc/login.defs"
+    change: lineinfile with an anchored regexp, or template the whole file
+    handler: none
+    service_risk: >
+      None for the declared services. Applies to newly created files only;
+      existing service files are unaffected.
+    rollback: restore UMASK 022
+    acceptance_test: test_login_defs_umask
+    expected_scanner_effect: accounts_umask_etc_login_defs moves fail -> pass
+
+  - id: HR-011
+    finding: Loopback interface not assigned to the trusted zone
+    service_conflict: true
+    scanner_ref:
+      oscap:
+        - xccdf_org.ssgproject.content_rule_firewalld_loopback_traffic_trusted
+        - xccdf_org.ssgproject.content_rule_firewalld_loopback_traffic_restricted
+    rule_rationale: >
+      "Loopback traffic is generated between processes on machine and is
+      typically critical to operation of the system. The loopback interface is
+      the only place that loopback network traffic should be seen, all other
+      interfaces should ignore traffic on this network as an anti-spoofing
+      measure."
+    verified_baseline: >
+      CORRECTED AFTER VERIFICATION. firewalld-1.2.5-2.el9_3 is already
+      installed and active. Original design assumed it needed installing.
+      Active zones: public (eth0), trusted (no interfaces). The trusted zone
+      exists with target ACCEPT but lo is not assigned to it, and no rich rules
+      drop spoofed loopback sources on eth0.
+    desired_state: >
+      Interface lo assigned to the trusted zone; traffic with a 127.0.0.0/8 or
+      ::1 source arriving on eth0 is dropped.
+    verify_precheck: "sudo firewall-cmd --get-active-zones; sudo firewall-cmd --zone=trusted --list-all"
+    change: >
+      Add lo to the trusted zone; add rich rules dropping spoofed loopback
+      sources on other interfaces. No package installation required.
+    handler: reload firewalld
+    service_risk: >
+      THIS IS THE SERVICE-CONFLICT CONTROL. A naive reading of "restrict
+      loopback traffic" blocks 127.0.0.1 entirely, which kills the web check
+      (curl --fail --silent http://127.0.0.1:8080/) and constitutes a forbidden
+      regression. The rule's rationale is two-sided: TRUST lo, RESTRICT spoofed
+      loopback sources arriving elsewhere. Correct parameterisation applies the
+      control and keeps the service green.
+      No new listening port is opened, so forbidden_regressions is respected.
+    parameters:
+      netforge_firewall_trusted_interfaces: ["lo"]
+      netforge_firewall_spoofed_sources: ["127.0.0.0/8", "::1"]
+    rollback: >
+      Remove lo from the trusted zone and remove the rich rules, returning
+      firewalld to its baseline configuration (public zone on eth0, trusted
+      zone empty).
+    acceptance_test: >
+      test_loopback_trusted AND test_spoofed_loopback_dropped AND
+      test_web_service_responds AND test_no_new_listening_ports
+    expected_scanner_effect: both firewalld loopback rules move fail -> pass
+
+false_positives:
+
+  - id: HR-FP-001
+    scanner_ref:
+      oscap: xccdf_org.ssgproject.content_rule_package_nginx_removed
+    title: Uninstall nginx Package
+    scan_result: fail
+    rule_rationale: >
+      "If there is no need to make the web server software available, removing
+      it provides a safeguard against its activation."
+    analysis: >
+      The rule is conditional on the premise that the web server is not needed.
+      That premise does not hold on this host. service-contract.yml declares a
+      required check 'web' that curls http://127.0.0.1:8080/ and expects
+      synthetic-service-marker=, and lists "disabling the synthetic web
+      service" as a forbidden regression. nginx IS the declared workload.
+    why_no_parameterisation: >
+      The remediation is package removal. No configuration value satisfies both
+      "nginx is absent" and "nginx serves 8080". This is a scope mismatch
+      between a general-purpose server benchmark and a declared web workload,
+      not a tuning problem - which distinguishes it from HR-011, where correct
+      parameters do resolve the conflict.
+    disposition: NOT REMEDIATED
+    expected_after_scan: remains fail, by design
+    acceptance_test: test_false_positive_nginx_still_installed
+    evidence: before/false-positive-analysis.txt
+
+candidates_reviewed_and_excluded:
+
+  - rule: xccdf_org.ssgproject.content_rule_partition_for_tmp
+    reason: >
+      Single-partition Vagrant box. Not remediable without rebuilding the
+      image, and the assigned lab defines the host. Recorded as an accepted
+      limitation rather than a defect.
+
+  - rule: LOGG-2154 (Lynis)
+    reason: >
+      Suggests logging to an external host. No such host exists in the assigned
+      lab, and standing up a listener would open a new listening port, which
+      forbidden_regressions bans.
+
+  - rule: HTTP-6710 (Lynis)
+    reason: >
+      Suggests adding HTTPS to nginx virtual hosts. The declared check is
+      plain HTTP on loopback. Adding TLS risks the web check for no benefit to
+      a synthetic loopback-only service.
+
+  - rule: HRDN-7230 (Lynis)
+    reason: >
+      Suggests installing a malware scanner. Lynis raises this on every host
+      regardless of threat model. No scanner is available in the assigned
+      package set without adding third-party repositories.
+
+design_corrections:
+  - entry: HR-002
+    correction: >
+      PermitEmptyPasswords was already 'no' at the effective level. The rule
+      fails on absence of an explicit declaration, not on a wrong value.
+  - entry: HR-007
+    correction: >
+      kernel.randomize_va_space already reads 2. Reframed from a value
+      correction to a persistence gap.
+  - entry: HR-008
+    correction: >
+      net.ipv4.tcp_syncookies already reads 1. Reframed from a value
+      correction to a persistence gap.
+  - entry: HR-011
+    correction: >
+      firewalld is already installed and active. Removed the installation step
+      and the nftables interaction concern; the change is zone assignment and
+      rich rules only.

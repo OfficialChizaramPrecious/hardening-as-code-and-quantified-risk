@@ -11,4 +11,3 @@
   {"asset_id": "A-10", "name": "dns-01", "role": "internal DNS", "criticality": "high", "environment": "production", "estimated_records": 0, "annual_revenue_dependency_usd": 1400000},
   {"asset_id": "A-11", "name": "db-reporting", "role": "reporting replica", "criticality": "medium", "environment": "production", "estimated_records": 220000, "annual_revenue_dependency_usd": 900000},
   {"asset_id": "A-12", "name": "print-03", "role": "office printer", "criticality": "low", "environment": "office", "estimated_records": 0, "annual_revenue_dependency_usd": 0}
-]

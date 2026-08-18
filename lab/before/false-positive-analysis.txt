@@ -1,0 +1,49 @@
+=== False positive analysis 2026-08-18T12:29:09Z ===
+
+RULE: xccdf_org.ssgproject.content_rule_package_nginx_removed
+TITLE: Uninstall nginx Package
+SCAN RESULT: fail
+
+RULE RATIONALE (verbatim from ssg-rl9-ds.xml):
+  If there is no need to make the web server software available,
+  removing it provides a safeguard against its activation.
+
+WHY THIS IS A FALSE POSITIVE ON THIS HOST:
+  The rule is conditional on the premise that the web server is not needed.
+  On this host the premise does not hold. service-contract.yml declares a
+  required check 'web': curl --fail --silent http://127.0.0.1:8080/ must
+  return synthetic-service-marker=. That service is nginx. The same contract
+  lists 'disabling the synthetic web service' as a forbidden regression.
+
+WHY NO PARAMETERISATION RESOLVES IT:
+  The remediation is package removal. There is no configuration setting that
+  satisfies 'nginx is absent' and 'nginx serves 8080' simultaneously. This is
+  a scope mismatch between a general-purpose server benchmark and a declared
+  web workload, not a tuning problem.
+
+EVIDENCE THAT THE SERVICE IS DECLARED AND LIVE:
+schema_version: "1.0"
+services:
+  - id: web
+    command: curl --fail --silent http://127.0.0.1:8080/
+    required_contains: synthetic-service-marker=
+  - id: audit
+    command: systemctl is-active auditd
+    required_exit: 0
+  - id: time
+    command: systemctl is-active chronyd || systemctl is-active chrony
+    required_exit: 0
+  - id: ssh-effective
+    command: sshd -T
+    required_contains: port 22
+forbidden_regressions:
+  - disabling the synthetic web service
+  - disabling audit collection
+  - removing time synchronization
+  - opening a new listening port
+
+  curl output at baseline:
+    synthetic-service-marker=UBI-A8-0725D08E95BE
+
+DISPOSITION: not remediated. Documented as a false positive.
+  Expected to remain 'fail' in the after-scan by design.

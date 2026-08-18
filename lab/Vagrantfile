@@ -13,9 +13,10 @@
         provider.memory = 2048
         provider.cpus = 2
       end
-      node.vm.provision "shell", path: "baseline.sh", args: [name], env: { "NETFORGE_MARKER" => ENV.fetch("NETFORGE_MARKER") }
+      node.vm.provision "shell", path: "baseline.sh", args: [name], env: { "NETFORGE_MARKER" => ENV.fetch("NETFORGE_MARKER", "") }
     end
   end
 end
+
 
 
