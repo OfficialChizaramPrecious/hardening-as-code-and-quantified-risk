@@ -1,0 +1,17 @@
+=== OpenSCAP baseline 2026-08-18T11:47:58Z ===
+data stream: /usr/share/xml/scap/ssg/content/ssg-rl9-ds.xml
+profile:     xccdf_org.ssgproject.content_profile_cis_server_l1
+scanner:     OpenSCAP command line tool (oscap) 1.3.14
+ssg:         scap-security-guide-0.1.81-1.el9_8.rocky.1.1.noarch
+exit code:   2 (rule failures present, expected at baseline)
+
+rule-result entries: 1532
+pass             159
+fail             101
+notapplicable    33
+notchecked       0
+notselected      1239
+error            0
+
+Lynis hardening index: 66
+Lynis suggestions:     39

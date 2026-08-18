@@ -1,0 +1,21 @@
+
+  [WARNING]: Test CORE-1000 had a long execution: 21.481175 seconds
+
+
+  [WARNING]: Test BOOT-5122 had a long execution: 16.543280 seconds
+
+
+  [WARNING]: Test PKGS-7350 had a long execution: 23.999483 seconds
+
+
+  [WARNING]: Test PKGS-7354 had a long execution: 10.877302 seconds
+
+
+  [WARNING]: Test NETW-2600 had a long execution: 110.838861 seconds
+
+
+  [WARNING]: Test HTTP-6720 had a long execution: 14.064509 seconds
+
+
+  [WARNING]: Test KRNL-6000 had a long execution: 13.603155 seconds
+

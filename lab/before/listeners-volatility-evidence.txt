@@ -1,0 +1,15 @@
+=== listeners volatility test 2026-08-18T11:07:26Z ===
+Two consecutive ss -tulpn captures of an unmodified host:
+3fa291f75edca01541e391c3d836796b999073ed3d6fbb859b647aa36582639e  /vagrant/before/listeners.txt
+42f2712c2933d924709990d3ad7cd995013b63ec0db3dbdc52347067a08ae718  /tmp/listeners2.txt
+
+Cause: PID and fd values are embedded per socket and change on every process restart or reboot.
+
+Stable projection (protocol, address, port only):
+tcp 0.0.0.0:22
+tcp 0.0.0.0:80
+tcp 0.0.0.0:8080
+tcp [::]:22
+tcp [::]:80
+udp 127.0.0.1:323
+udp [::1]:323

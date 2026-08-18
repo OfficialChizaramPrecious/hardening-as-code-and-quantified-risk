@@ -1,0 +1,56 @@
+{
+  "schema_version": "1.0",
+  "purpose": "Declares which baseline facts the rollback play must restore, and which captured artefacts are excluded from hash comparison because they are not reproducible on an unmodified host.",
+  "determined_by": "Empirical test: each artefact was captured twice on an unmodified host and the SHA-256 values compared. Evidence in sysctl-volatility-evidence.txt and listeners-volatility-evidence.txt.",
+  "hash_stable": [
+    {
+      "artefact": "sshd-effective.txt",
+      "command": "sshd -T",
+      "verified_identical": true,
+      "comparison": "whole-file sha256"
+    },
+    {
+      "artefact": "enabled-services.txt",
+      "command": "systemctl list-unit-files --state=enabled --no-pager",
+      "verified_identical": true,
+      "comparison": "whole-file sha256"
+    },
+    {
+      "artefact": "file-permissions.csv",
+      "command": "stat on declared paths",
+      "verified_identical": true,
+      "comparison": "whole-file sha256"
+    }
+  ],
+  "excluded_from_hash_comparison": [
+    {
+      "artefact": "sysctl.txt",
+      "reason": "Contains kernel counters and a per-read random value, so two captures of an unmodified host never produce the same hash.",
+      "volatile_keys_observed": [
+        "kernel.random.uuid",
+        "kernel.ns_last_pid",
+        "fs.dentry-state",
+        "fs.file-nr",
+        "fs.inode-nr",
+        "fs.inode-state",
+        "net.netfilter.nf_conntrack_count"
+      ],
+      "comparison_used_instead": "Only the specific sysctl keys the hardening role changes are read individually and compared by value."
+    },
+    {
+      "artefact": "listeners.txt",
+      "reason": "ss -tulpn embeds process IDs and file descriptors per socket. These change on every process restart and on every reboot, including the snapshot restore performed during the unattended lifecycle.",
+      "comparison_used_instead": "Projection to protocol and address:port, sorted. PID and fd fields are discarded before comparison."
+    }
+  ],
+  "baseline_listening_sockets": [
+    "tcp 0.0.0.0:22",
+    "tcp [::]:22",
+    "tcp 0.0.0.0:80",
+    "tcp [::]:80",
+    "tcp 0.0.0.0:8080",
+    "udp 127.0.0.1:323",
+    "udp [::1]:323"
+  ],
+  "note_on_port_80": "nginx listens on both 80 and 8080 at baseline. Only 8080 is named in service-contract.yml. Port 80 is recorded so that a later remediation closing it is identified as a deliberate change rather than an undetected regression."
+}

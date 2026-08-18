@@ -1,0 +1,37 @@
+UNIT FILE                          STATE   PRESET
+auditd.service                     enabled enabled
+chronyd.service                    enabled enabled
+crond.service                      enabled enabled
+dbus-broker.service                enabled enabled
+firewalld.service                  enabled enabled
+getty@.service                     enabled enabled
+haveged.service                    enabled disabled
+irqbalance.service                 enabled enabled
+lvm2-monitor.service               enabled enabled
+NetworkManager-dispatcher.service  enabled enabled
+NetworkManager-wait-online.service enabled disabled
+NetworkManager.service             enabled enabled
+nginx.service                      enabled disabled
+nis-domainname.service             enabled enabled
+rsyslog.service                    enabled enabled
+selinux-autorelabel-mark.service   enabled enabled
+sshd.service                       enabled enabled
+sssd.service                       enabled enabled
+sysstat.service                    enabled enabled
+systemd-boot-update.service        enabled enabled
+systemd-network-generator.service  enabled enabled
+tuned.service                      enabled enabled
+vboxadd-service.service            enabled disabled
+vboxadd.service                    enabled disabled
+dbus.socket                        enabled enabled
+dm-event.socket                    enabled enabled
+lvm2-lvmpolld.socket               enabled enabled
+sssd-kcm.socket                    enabled enabled
+reboot.target                      enabled enabled
+dnf-makecache.timer                enabled enabled
+logrotate.timer                    enabled enabled
+mlocate-updatedb.timer             enabled enabled
+sysstat-collect.timer              enabled disabled
+sysstat-summary.timer              enabled disabled
+
+34 unit files listed.

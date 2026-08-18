@@ -1,0 +1,30 @@
+=== sysctl volatility test 2026-08-18T11:00:55Z ===
+Two consecutive sysctl -a dumps of an unmodified host:
+1b9ded9368861bb2a730d73a337e34e41197aa171db0d98f2b59f9004543ed87  /vagrant/before/sysctl.txt
+13a752f82041a675c1a71f614251c1d631f988e5dae4373264c155b5b68d075c  /tmp/sysctl-again.txt
+
+Differing keys:
+15c15
+< fs.dentry-state = 62987	42729	45	0	3123	0
+---
+> fs.dentry-state = 63909	43662	45	0	3130	0
+22,24c22,24
+< fs.file-nr = 1056	0	9223372036854775807
+< fs.inode-nr = 58994	351
+< fs.inode-state = 58994	351	0	0	0	0	0
+---
+> fs.file-nr = 1024	0	9223372036854775807
+> fs.inode-nr = 59908	351
+> fs.inode-state = 59908	351	0	0	0	0	0
+116c116
+< kernel.ns_last_pid = 5336
+---
+> kernel.ns_last_pid = 5346
+151c151
+< kernel.random.uuid = 464ac9db-a564-48ee-9b87-8f2c4312f4ed
+---
+> kernel.random.uuid = 099666c9-92d9-4d0e-be28-f470d5dd0619
+854c854
+< net.netfilter.nf_conntrack_count = 6
+---
+> net.netfilter.nf_conntrack_count = 5
