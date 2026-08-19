@@ -1,0 +1,2 @@
+risk_id,source_finding_ids,asset,threat,control_weakness,business_consequence,inherent_likelihood_1_5,inherent_impact_1_5,inherent_score,sle_low_usd,sle_high_usd,aro_low,aro_high,ale_low_usd,ale_high_usd,treatment,owner,target_date,cost_usd,residual_likelihood_1_5,residual_impact_1_5,residual_score,acceptance_authority,review_trigger,decision
+R-001,,,,,,,,,,,,,,,,,,,,,,,,
