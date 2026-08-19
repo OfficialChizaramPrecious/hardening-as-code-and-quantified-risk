@@ -1,13 +1,457 @@
-"assets": [
-  {"asset_id": "A-01", "name": "edge-lab-07", "role": "ephemeral QA scanner", "criticality": "low", "environment": "test", "estimated_records": 0, "annual_revenue_dependency_usd": 0},
-  {"asset_id": "A-02", "name": "payroll-api-01", "role": "payroll API", "criticality": "crown-jewel", "environment": "production", "estimated_records": 18400, "annual_revenue_dependency_usd": 4200000},
-  {"asset_id": "A-03", "name": "vpn-gw-01", "role": "remote access gateway", "criticality": "high", "environment": "production", "estimated_records": 0, "annual_revenue_dependency_usd": 3100000},
-  {"asset_id": "A-04", "name": "files-01", "role": "customer attachments", "criticality": "crown-jewel", "environment": "production", "estimated_records": 920000, "annual_revenue_dependency_usd": 1800000},
-  {"asset_id": "A-05", "name": "helpdesk-02", "role": "support workstation", "criticality": "medium", "environment": "production", "estimated_records": 0, "annual_revenue_dependency_usd": 600000},
-  {"asset_id": "A-06", "name": "backup-01", "role": "backup coordinator", "criticality": "crown-jewel", "environment": "production", "estimated_records": 920000, "annual_revenue_dependency_usd": 5200000},
-  {"asset_id": "A-07", "name": "marketing-old", "role": "retired CMS", "criticality": "low", "environment": "quarantine", "estimated_records": 0, "annual_revenue_dependency_usd": 0},
-  {"asset_id": "A-08", "name": "idp-01", "role": "identity provider", "criticality": "crown-jewel", "environment": "production", "estimated_records": 18400, "annual_revenue_dependency_usd": 8100000},
-  {"asset_id": "A-09", "name": "dev-git-01", "role": "source repository", "criticality": "high", "environment": "production", "estimated_records": 0, "annual_revenue_dependency_usd": 3600000},
-  {"asset_id": "A-10", "name": "dns-01", "role": "internal DNS", "criticality": "high", "environment": "production", "estimated_records": 0, "annual_revenue_dependency_usd": 1400000},
-  {"asset_id": "A-11", "name": "db-reporting", "role": "reporting replica", "criticality": "medium", "environment": "production", "estimated_records": 220000, "annual_revenue_dependency_usd": 900000},
-  {"asset_id": "A-12", "name": "print-03", "role": "office printer", "criticality": "low", "environment": "office", "estimated_records": 0, "annual_revenue_dependency_usd": 0}
+{
+  "schema_version": "1.0",
+  "project": "GRC-A4",
+  "evidence_marker": "UBI-A8-0725D08E95BE",
+  "budget": 85000,
+  "required_treatment_count": 3,
+  "assets": [
+    {
+      "asset_id": "A-01",
+      "name": "edge-lab-07",
+      "role": "ephemeral QA scanner",
+      "criticality": "low",
+      "environment": "test",
+      "estimated_records": 0,
+      "annual_revenue_dependency_usd": 0.0
+    },
+    {
+      "asset_id": "A-02",
+      "name": "payroll-api-01",
+      "role": "payroll API",
+      "criticality": "crown-jewel",
+      "environment": "production",
+      "estimated_records": 18400,
+      "annual_revenue_dependency_usd": 4200000.0
+    },
+    {
+      "asset_id": "A-03",
+      "name": "vpn-gw-01",
+      "role": "remote access gateway",
+      "criticality": "high",
+      "environment": "production",
+      "estimated_records": 0,
+      "annual_revenue_dependency_usd": 3100000.0
+    },
+    {
+      "asset_id": "A-04",
+      "name": "files-01",
+      "role": "customer attachments",
+      "criticality": "crown-jewel",
+      "environment": "production",
+      "estimated_records": 920000,
+      "annual_revenue_dependency_usd": 1800000.0
+    },
+    {
+      "asset_id": "A-05",
+      "name": "helpdesk-02",
+      "role": "support workstation",
+      "criticality": "medium",
+      "environment": "production",
+      "estimated_records": 0,
+      "annual_revenue_dependency_usd": 600000.0
+    },
+    {
+      "asset_id": "A-06",
+      "name": "backup-01",
+      "role": "backup coordinator",
+      "criticality": "crown-jewel",
+      "environment": "production",
+      "estimated_records": 920000,
+      "annual_revenue_dependency_usd": 5200000.0
+    },
+    {
+      "asset_id": "A-07",
+      "name": "marketing-old",
+      "role": "retired CMS",
+      "criticality": "low",
+      "environment": "quarantine",
+      "estimated_records": 0,
+      "annual_revenue_dependency_usd": 0.0
+    },
+    {
+      "asset_id": "A-08",
+      "name": "idp-01",
+      "role": "identity provider",
+      "criticality": "crown-jewel",
+      "environment": "production",
+      "estimated_records": 18400,
+      "annual_revenue_dependency_usd": 8100000.0
+    },
+    {
+      "asset_id": "A-09",
+      "name": "dev-git-01",
+      "role": "source repository",
+      "criticality": "high",
+      "environment": "production",
+      "estimated_records": 0,
+      "annual_revenue_dependency_usd": 3600000.0
+    },
+    {
+      "asset_id": "A-10",
+      "name": "dns-01",
+      "role": "internal DNS",
+      "criticality": "high",
+      "environment": "production",
+      "estimated_records": 0,
+      "annual_revenue_dependency_usd": 1400000.0
+    },
+    {
+      "asset_id": "A-11",
+      "name": "db-reporting",
+      "role": "reporting replica",
+      "criticality": "medium",
+      "environment": "production",
+      "estimated_records": 220000,
+      "annual_revenue_dependency_usd": 900000.0
+    },
+    {
+      "asset_id": "A-12",
+      "name": "print-03",
+      "role": "office printer",
+      "criticality": "low",
+      "environment": "office",
+      "estimated_records": 0,
+      "annual_revenue_dependency_usd": 0.0
+    }
+  ],
+  "risks": [
+    {
+      "risk_id": "R-001",
+      "asset_id": "A-01",
+      "source_finding_ids": [
+        "VF-001"
+      ],
+      "freq_min": 0.5,
+      "freq_mode": 1.5,
+      "freq_max": 4.0,
+      "loss_min": 500.0,
+      "loss_mode": 2500.0,
+      "loss_max": 15000.0,
+      "control_min": 0.55,
+      "control_max": 0.8,
+      "dependency_multiplier": 1.0,
+      "title": "Unsupported web component",
+      "rationale": "FREQUENCY: exploit evidence 'public exploit listed' maps to the weaponised tier (1.0/3.0/8.0 events per year), scaled by the test environment factor 0.5. LOSS: 0 USD annual revenue dependency at 1/5/20 percent, with a records uplift for 0 records. CONTROL: Isolated test subnet directly limits reachability of an internet-facing component. Strong for this weakness. DEPENDENCY: No other asset depends on this system operationally; consequences remain local."
+    },
+    {
+      "risk_id": "R-002",
+      "asset_id": "A-02",
+      "source_finding_ids": [
+        "VF-002"
+      ],
+      "freq_min": 0.3,
+      "freq_mode": 1.0,
+      "freq_max": 3.0,
+      "loss_min": 54600.0,
+      "loss_mode": 273000.0,
+      "loss_max": 1092000.0,
+      "control_min": 0.05,
+      "control_max": 0.2,
+      "dependency_multiplier": 1.0,
+      "title": "Broken object authorization",
+      "rationale": "FREQUENCY: exploit evidence 'validated cross-tenant read' maps to the demonstrated tier (0.3/1.0/3.0 events per year), scaled by the production environment factor 1.0. LOSS: 4200000 USD annual revenue dependency at 1/5/20 percent, with a records uplift for 18400 records. CONTROL: WAF inspects request shape; authentication proves identity. Neither performs the server-side object authorization check that was validated as missing. The attacker is authenticated by premise. DEPENDENCY: No other asset depends on this system operationally; consequences remain local."
+    },
+    {
+      "risk_id": "R-003",
+      "asset_id": "A-03",
+      "source_finding_ids": [
+        "VF-003"
+      ],
+      "freq_min": 0.05,
+      "freq_mode": 0.25,
+      "freq_max": 0.8,
+      "loss_min": 31000.0,
+      "loss_mode": 155000.0,
+      "loss_max": 620000.0,
+      "control_min": 0.35,
+      "control_max": 0.6,
+      "dependency_multiplier": 1.2,
+      "title": "Outdated VPN appliance",
+      "rationale": "FREQUENCY: exploit evidence 'version match only' maps to the inferred tier (0.05/0.25/0.8 events per year), scaled by the production environment factor 1.0. LOSS: 3100000 USD annual revenue dependency at 1/5/20 percent, with a records uplift for 0 records. CONTROL: MFA and geo alerting raise the cost of using stolen credentials, but do not patch an appliance firmware flaw. Partial, and detective rather than preventive. DEPENDENCY: Remote access gateway. It is the entry path to the internal estate, so compromise extends beyond the appliance itself."
+    },
+    {
+      "risk_id": "R-004",
+      "asset_id": "A-04",
+      "source_finding_ids": [
+        "VF-004"
+      ],
+      "freq_min": 0.1,
+      "freq_mode": 0.5,
+      "freq_max": 1.5,
+      "loss_min": 32400.0,
+      "loss_mode": 162000.0,
+      "loss_max": 648000.0,
+      "control_min": 0.3,
+      "control_max": 0.55,
+      "dependency_multiplier": 1.0,
+      "title": "SMB signing not required",
+      "rationale": "FREQUENCY: exploit evidence 'configuration confirmed' maps to the conditional tier (0.1/0.5/1.5 events per year), scaled by the production environment factor 1.0. LOSS: 1800000 USD annual revenue dependency at 1/5/20 percent, with a records uplift for 920000 records. CONTROL: A segmented server VLAN limits who can reach the share, but does not prevent relay or tampering for hosts already inside that segment. SMB signing is the control that addresses it. DEPENDENCY: No other asset depends on this system operationally; consequences remain local."
+    },
+    {
+      "risk_id": "R-005",
+      "asset_id": "A-05",
+      "source_finding_ids": [
+        "VF-005"
+      ],
+      "freq_min": 0.3,
+      "freq_mode": 1.0,
+      "freq_max": 3.0,
+      "loss_min": 6000.0,
+      "loss_mode": 30000.0,
+      "loss_max": 120000.0,
+      "control_min": 0.25,
+      "control_max": 0.5,
+      "dependency_multiplier": 1.0,
+      "title": "Local administrator password reused",
+      "rationale": "FREQUENCY: exploit evidence 'validated on two synthetic accounts' maps to the demonstrated tier (0.3/1.0/3.0 events per year), scaled by the production environment factor 1.0. LOSS: 600000 USD annual revenue dependency at 1/5/20 percent, with a records uplift for 0 records. CONTROL: EDR may detect lateral movement after reuse of a shared local admin password, but does not prevent the reuse itself. Detective, not preventive. DEPENDENCY: No other asset depends on this system operationally; consequences remain local."
+    },
+    {
+      "risk_id": "R-006",
+      "asset_id": "A-06",
+      "source_finding_ids": [
+        "VF-006"
+      ],
+      "freq_min": 0.3,
+      "freq_mode": 1.0,
+      "freq_max": 3.0,
+      "loss_min": 93600.0,
+      "loss_mode": 468000.0,
+      "loss_max": 1872000.0,
+      "control_min": 0.05,
+      "control_max": 0.2,
+      "dependency_multiplier": 1.3,
+      "title": "Management interface accessible from user VLAN",
+      "rationale": "FREQUENCY: exploit evidence 'network path validated' maps to the demonstrated tier (0.3/1.0/3.0 events per year), scaled by the production environment factor 1.0. LOSS: 5200000 USD annual revenue dependency at 1/5/20 percent, with a records uplift for 920000 records. CONTROL: Password authentication alone against a management interface reachable from the user VLAN. The network path was validated; the control does not remove it. DEPENDENCY: Backup coordinator. Compromise removes the recovery path for every other asset, amplifying the consequences of any separate incident."
+    },
+    {
+      "risk_id": "R-007",
+      "asset_id": "A-07",
+      "source_finding_ids": [
+        "VF-007"
+      ],
+      "freq_min": 0.2,
+      "freq_mode": 0.6,
+      "freq_max": 1.6,
+      "loss_min": 500.0,
+      "loss_mode": 2500.0,
+      "loss_max": 15000.0,
+      "control_min": 0.7,
+      "control_max": 0.9,
+      "dependency_multiplier": 1.0,
+      "title": "Remote code execution",
+      "rationale": "FREQUENCY: exploit evidence 'PoC available' maps to the weaponised tier (1.0/3.0/8.0 events per year), scaled by the quarantine environment factor 0.2. LOSS: 0 USD annual revenue dependency at 1/5/20 percent, with a records uplift for 0 records. CONTROL: No DNS and blocked egress remove the paths a remote code execution payload needs for callback or lateral movement. Strong for this weakness. DEPENDENCY: No other asset depends on this system operationally; consequences remain local."
+    },
+    {
+      "risk_id": "R-008",
+      "asset_id": "A-08",
+      "source_finding_ids": [
+        "VF-008"
+      ],
+      "freq_min": 0.1,
+      "freq_mode": 0.5,
+      "freq_max": 1.5,
+      "loss_min": 105300.0,
+      "loss_mode": 526500.0,
+      "loss_max": 2106000.0,
+      "control_min": 0.35,
+      "control_max": 0.6,
+      "dependency_multiplier": 1.5,
+      "title": "Admin session timeout exceeds policy",
+      "rationale": "FREQUENCY: exploit evidence 'configuration confirmed' maps to the conditional tier (0.1/0.5/1.5 events per year), scaled by the production environment factor 1.0. LOSS: 8100000 USD annual revenue dependency at 1/5/20 percent, with a records uplift for 18400 records. CONTROL: Phishing-resistant MFA substantially reduces the chance of an attacker obtaining an admin session at all, which is the precondition. It does nothing about how long an established session survives. DEPENDENCY: Identity provider. Every federated system trusts its assertions, so compromise propagates estate-wide rather than staying on the asset."
+    },
+    {
+      "risk_id": "R-009",
+      "asset_id": "A-09",
+      "source_finding_ids": [
+        "VF-009"
+      ],
+      "freq_min": 0.3,
+      "freq_mode": 1.0,
+      "freq_max": 3.0,
+      "loss_min": 36000.0,
+      "loss_mode": 180000.0,
+      "loss_max": 720000.0,
+      "control_min": 0.2,
+      "control_max": 0.45,
+      "dependency_multiplier": 1.2,
+      "title": "Inactive deploy key remains valid",
+      "rationale": "FREQUENCY: exploit evidence 'key authentication validated' maps to the demonstrated tier (0.3/1.0/3.0 events per year), scaled by the production environment factor 1.0. LOSS: 3600000 USD annual revenue dependency at 1/5/20 percent, with a records uplift for 0 records. CONTROL: Branch protection governs what may be merged. It does not revoke an inactive deploy key whose authentication was validated as still working. DEPENDENCY: Source repository. Deploy keys reach production systems, so compromise propagates through the release path."
+    },
+    {
+      "risk_id": "R-010",
+      "asset_id": "A-10",
+      "source_finding_ids": [
+        "VF-010"
+      ],
+      "freq_min": 0.3,
+      "freq_mode": 1.0,
+      "freq_max": 3.0,
+      "loss_min": 14000.0,
+      "loss_mode": 70000.0,
+      "loss_max": 280000.0,
+      "control_min": 0.2,
+      "control_max": 0.45,
+      "dependency_multiplier": 1.4,
+      "title": "Recursion available to guest VLAN",
+      "rationale": "FREQUENCY: exploit evidence 'network query validated' maps to the demonstrated tier (0.3/1.0/3.0 events per year), scaled by the production environment factor 1.0. LOSS: 1400000 USD annual revenue dependency at 1/5/20 percent, with a records uplift for 0 records. CONTROL: Rate limiting reduces amplification volume but does not restrict which clients may recurse. The ACL is the control that addresses it. DEPENDENCY: Internal DNS. Every host resolves through it; poisoned or redirected resolution affects systems that are not themselves vulnerable."
+    },
+    {
+      "risk_id": "R-011",
+      "asset_id": "A-11",
+      "source_finding_ids": [
+        "VF-011"
+      ],
+      "freq_min": 0.1,
+      "freq_mode": 0.5,
+      "freq_max": 1.5,
+      "loss_min": 11700.0,
+      "loss_mode": 58500.0,
+      "loss_max": 234000.0,
+      "control_min": 0.15,
+      "control_max": 0.4,
+      "dependency_multiplier": 1.0,
+      "title": "TLS certificate expires in 12 days",
+      "rationale": "FREQUENCY: exploit evidence 'certificate inspected' maps to the conditional tier (0.1/0.5/1.5 events per year), scaled by the production environment factor 1.0. LOSS: 900000 USD annual revenue dependency at 1/5/20 percent, with a records uplift for 220000 records. CONTROL: A private network limits who can reach the endpoint but has no bearing on certificate expiry. Expiry causes availability failure regardless of network position. DEPENDENCY: No other asset depends on this system operationally; consequences remain local."
+    },
+    {
+      "risk_id": "R-012",
+      "asset_id": "A-12",
+      "source_finding_ids": [
+        "VF-012"
+      ],
+      "freq_min": 0.18,
+      "freq_mode": 0.6,
+      "freq_max": 1.8,
+      "loss_min": 500.0,
+      "loss_mode": 2500.0,
+      "loss_max": 15000.0,
+      "control_min": 0.45,
+      "control_max": 0.7,
+      "dependency_multiplier": 1.0,
+      "title": "Default management community string",
+      "rationale": "FREQUENCY: exploit evidence 'validated read-only' maps to the demonstrated tier (0.3/1.0/3.0 events per year), scaled by the office environment factor 0.6. LOSS: 0 USD annual revenue dependency at 1/5/20 percent, with a records uplift for 0 records. CONTROL: VLAN isolation limits reach to the management string. Read-only access was validated, so the control reduces exposure without eliminating it. DEPENDENCY: No other asset depends on this system operationally; consequences remain local."
+    }
+  ],
+  "treatments": [
+    {
+      "id": "T-001",
+      "risk_id": "R-001",
+      "cost": 2000.0,
+      "dependencies": [],
+      "treated_control_min": 0.9,
+      "treated_control_max": 0.98,
+      "description": "Retire asset",
+      "rationale": "Removing the host eliminates the exposure entirely rather than mitigating it. Residual reflects decommissioning risk only."
+    },
+    {
+      "id": "T-002",
+      "risk_id": "R-002",
+      "cost": 45000.0,
+      "dependencies": [],
+      "treated_control_min": 0.8,
+      "treated_control_max": 0.93,
+      "description": "Enforce server-side object authorization",
+      "rationale": "Adds the authorization check that was validated as missing. Directly addresses the weakness rather than surrounding it. Costed as application development plus regression testing across a payroll API."
+    },
+    {
+      "id": "T-003",
+      "risk_id": "R-003",
+      "cost": 8000.0,
+      "dependencies": [],
+      "treated_control_min": 0.7,
+      "treated_control_max": 0.88,
+      "description": "Upgrade firmware",
+      "rationale": "Patches the appliance. Evidence is version match only, so the upgrade also resolves the uncertainty about whether the flaw is present."
+    },
+    {
+      "id": "T-004",
+      "risk_id": "R-004",
+      "cost": 12000.0,
+      "dependencies": [],
+      "treated_control_min": 0.65,
+      "treated_control_max": 0.85,
+      "description": "Require SMB signing and test legacy clients",
+      "rationale": "Signing prevents relay and tampering. Cost carries the legacy client testing the remediation text calls for, which is the real risk in this change."
+    },
+    {
+      "id": "T-005",
+      "risk_id": "R-005",
+      "cost": 18000.0,
+      "dependencies": [],
+      "treated_control_min": 0.75,
+      "treated_control_max": 0.9,
+      "description": "Deploy unique managed local passwords",
+      "rationale": "Removes the shared credential entirely. Costed as a managed local administrator password rollout across the estate."
+    },
+    {
+      "id": "T-006",
+      "risk_id": "R-006",
+      "cost": 22000.0,
+      "dependencies": [],
+      "treated_control_min": 0.75,
+      "treated_control_max": 0.92,
+      "description": "Restrict management interface to management VLAN and require MFA",
+      "rationale": "Removes the validated network path and adds a second factor. Two controls, both addressing the weakness."
+    },
+    {
+      "id": "T-007",
+      "risk_id": "R-007",
+      "cost": 1500.0,
+      "dependencies": [],
+      "treated_control_min": 0.92,
+      "treated_control_max": 0.99,
+      "description": "Destroy retained instance after evidence hold",
+      "rationale": "Destruction ends the exposure. Cost is administrative; the evidence hold governs timing, not price."
+    },
+    {
+      "id": "T-008",
+      "risk_id": "R-008",
+      "cost": 6000.0,
+      "dependencies": [],
+      "treated_control_min": 0.7,
+      "treated_control_max": 0.88,
+      "description": "Reduce privileged session lifetime",
+      "rationale": "A configuration change to session policy. Cheap relative to its effect because it needs no new technology, only enforcement of existing policy."
+    },
+    {
+      "id": "T-009",
+      "risk_id": "R-009",
+      "cost": 9000.0,
+      "dependencies": [],
+      "treated_control_min": 0.72,
+      "treated_control_max": 0.9,
+      "description": "Revoke key and establish owner and expiry control",
+      "rationale": "Revocation addresses the immediate finding; the ownership and expiry process prevents recurrence."
+    },
+    {
+      "id": "T-010",
+      "risk_id": "R-010",
+      "cost": 4000.0,
+      "dependencies": [],
+      "treated_control_min": 0.75,
+      "treated_control_max": 0.92,
+      "description": "Restrict recursion ACL",
+      "rationale": "Limits recursion to authorised client ranges. Directly addresses the validated query path."
+    },
+    {
+      "id": "T-011",
+      "risk_id": "R-011",
+      "cost": 3000.0,
+      "dependencies": [],
+      "treated_control_min": 0.85,
+      "treated_control_max": 0.96,
+      "description": "Renew certificate and automate expiry alerting",
+      "rationale": "Renewal resolves the immediate expiry; automation prevents the recurrence that makes this a process failure rather than a one-off."
+    },
+    {
+      "id": "T-012",
+      "risk_id": "R-012",
+      "cost": 2500.0,
+      "dependencies": [],
+      "treated_control_min": 0.7,
+      "treated_control_max": 0.9,
+      "description": "Rotate community string and restrict management",
+      "rationale": "Rotation invalidates the default credential; management restriction limits who can reach it."
+    }
+  ]
+}

@@ -1,0 +1,129 @@
+{
+  "parameters": {
+    "budget": 85000.0,
+    "draws": 50000,
+    "required_treatment_count": 3,
+    "sensitivity_factor": 0.3
+  },
+  "priced_treatments": [
+    {
+      "cost": 2000.0,
+      "dependencies": [],
+      "id": "T-001",
+      "mean_reduction": 3173.728339563666,
+      "residual_after": 718.3542904371872,
+      "residual_before": 3892.082630000853,
+      "risk_id": "R-001"
+    },
+    {
+      "cost": 45000.0,
+      "dependencies": [],
+      "id": "T-002",
+      "mean_reduction": 502054.4895179913,
+      "residual_after": 91532.43747263544,
+      "residual_before": 593586.9269906267,
+      "risk_id": "R-002"
+    },
+    {
+      "cost": 8000.0,
+      "dependencies": [],
+      "id": "T-003",
+      "mean_reduction": 37264.661576806146,
+      "residual_after": 24847.018467068672,
+      "residual_before": 62111.68004387482,
+      "risk_id": "R-003"
+    },
+    {
+      "cost": 12000.0,
+      "dependencies": [],
+      "id": "T-004",
+      "mean_reduction": 63830.093484432284,
+      "residual_after": 49145.19554844894,
+      "residual_before": 112975.28903288122,
+      "risk_id": "R-004"
+    },
+    {
+      "cost": 18000.0,
+      "dependencies": [],
+      "id": "T-005",
+      "mean_reduction": 33511.89582996594,
+      "residual_after": 13038.374264173865,
+      "residual_before": 46550.27009413981,
+      "risk_id": "R-005"
+    },
+    {
+      "cost": 22000.0,
+      "dependencies": [],
+      "id": "T-006",
+      "mean_reduction": 1075830.256007442,
+      "residual_after": 249907.76840068054,
+      "residual_before": 1325738.0244081225,
+      "risk_id": "R-006"
+    },
+    {
+      "cost": 1500.0,
+      "dependencies": [],
+      "id": "T-007",
+      "mean_reduction": 738.3846252141752,
+      "residual_after": 214.37463406332023,
+      "residual_before": 952.7592592774954,
+      "risk_id": "R-007"
+    },
+    {
+      "cost": 6000.0,
+      "dependencies": [],
+      "id": "T-008",
+      "mean_reduction": 301975.83039754047,
+      "residual_after": 201173.48420953963,
+      "residual_before": 503149.31460708013,
+      "risk_id": "R-008"
+    },
+    {
+      "cost": 9000.0,
+      "dependencies": [],
+      "id": "T-009",
+      "mean_reduction": 259943.39763929657,
+      "residual_after": 101718.09287404097,
+      "residual_before": 361661.49051333754,
+      "risk_id": "R-009"
+    },
+    {
+      "cost": 4000.0,
+      "dependencies": [],
+      "id": "T-010",
+      "mean_reduction": 124834.69180856389,
+      "residual_after": 40391.16808998222,
+      "residual_before": 165225.8598985461,
+      "risk_id": "R-010"
+    },
+    {
+      "cost": 3000.0,
+      "dependencies": [],
+      "id": "T-011",
+      "mean_reduction": 44519.21629427839,
+      "residual_after": 6712.125205600946,
+      "residual_before": 51231.34149987934,
+      "risk_id": "R-011"
+    },
+    {
+      "cost": 2500.0,
+      "dependencies": [],
+      "id": "T-012",
+      "mean_reduction": 1156.522035544909,
+      "residual_after": 1027.6176616317182,
+      "residual_before": 2184.139697176627,
+      "risk_id": "R-012"
+    }
+  ],
+  "schema_version": "1.0",
+  "selection": {
+    "mean_reduction": 1879860.58,
+    "selected_treatment_ids": [
+      "T-002",
+      "T-006",
+      "T-008"
+    ],
+    "total_cost": 73000.0,
+    "validation": "valid"
+  }
+}

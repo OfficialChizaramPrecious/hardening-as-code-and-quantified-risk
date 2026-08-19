@@ -1,0 +1,210 @@
+{
+  "parameters": {
+    "budget": 85000.0,
+    "draws": 50000,
+    "required_treatment_count": 3,
+    "sensitivity_factor": 0.3
+  },
+  "project": "GRC-A4",
+  "risks": [
+    {
+      "asset_id": "A-01",
+      "draws": 50000,
+      "inherent": {
+        "mean": 11979.82,
+        "p50": 9995.18,
+        "p90": 23289.4
+      },
+      "mean_reduction": 8087.74,
+      "residual": {
+        "mean": 3892.08,
+        "p50": 3153.68,
+        "p90": 7703.33
+      },
+      "risk_id": "R-001"
+    },
+    {
+      "asset_id": "A-02",
+      "draws": 50000,
+      "inherent": {
+        "mean": 678464.54,
+        "p50": 572882.36,
+        "p90": 1292334.46
+      },
+      "mean_reduction": 84877.62,
+      "residual": {
+        "mean": 593586.93,
+        "p50": 501391.61,
+        "p90": 1130989.86
+      },
+      "risk_id": "R-002"
+    },
+    {
+      "asset_id": "A-03",
+      "draws": 50000,
+      "inherent": {
+        "mean": 118294.0,
+        "p50": 98995.23,
+        "p90": 228538.09
+      },
+      "mean_reduction": 56182.31,
+      "residual": {
+        "mean": 62111.68,
+        "p50": 51551.42,
+        "p90": 121015.33
+      },
+      "risk_id": "R-003"
+    },
+    {
+      "asset_id": "A-04",
+      "draws": 50000,
+      "inherent": {
+        "mean": 196357.31,
+        "p50": 164115.6,
+        "p90": 378423.71
+      },
+      "mean_reduction": 83382.02,
+      "residual": {
+        "mean": 112975.29,
+        "p50": 93678.69,
+        "p90": 217952.36
+      },
+      "risk_id": "R-004"
+    },
+    {
+      "asset_id": "A-05",
+      "draws": 50000,
+      "inherent": {
+        "mean": 74458.94,
+        "p50": 63176.85,
+        "p90": 141705.62
+      },
+      "mean_reduction": 27908.67,
+      "residual": {
+        "mean": 46550.27,
+        "p50": 39172.41,
+        "p90": 89374.31
+      },
+      "risk_id": "R-005"
+    },
+    {
+      "asset_id": "A-06",
+      "draws": 50000,
+      "inherent": {
+        "mean": 1515236.28,
+        "p50": 1281584.03,
+        "p90": 2869270.94
+      },
+      "mean_reduction": 189498.26,
+      "residual": {
+        "mean": 1325738.02,
+        "p50": 1121119.77,
+        "p90": 2515687.15
+      },
+      "risk_id": "R-006"
+    },
+    {
+      "asset_id": "A-07",
+      "draws": 50000,
+      "inherent": {
+        "mean": 4763.64,
+        "p50": 3956.7,
+        "p90": 9265.66
+      },
+      "mean_reduction": 3810.89,
+      "residual": {
+        "mean": 952.76,
+        "p50": 754.3,
+        "p90": 1928.33
+      },
+      "risk_id": "R-007"
+    },
+    {
+      "asset_id": "A-08",
+      "draws": 50000,
+      "inherent": {
+        "mean": 958892.99,
+        "p50": 802365.82,
+        "p90": 1844217.75
+      },
+      "mean_reduction": 455743.68,
+      "residual": {
+        "mean": 503149.31,
+        "p50": 415839.16,
+        "p90": 976841.27
+      },
+      "risk_id": "R-008"
+    },
+    {
+      "asset_id": "A-09",
+      "draws": 50000,
+      "inherent": {
+        "mean": 536074.93,
+        "p50": 454224.5,
+        "p90": 1017655.59
+      },
+      "mean_reduction": 174413.44,
+      "residual": {
+        "mean": 361661.49,
+        "p50": 303877.13,
+        "p90": 688563.99
+      },
+      "risk_id": "R-009"
+    },
+    {
+      "asset_id": "A-10",
+      "draws": 50000,
+      "inherent": {
+        "mean": 244770.12,
+        "p50": 206884.86,
+        "p90": 466161.51
+      },
+      "mean_reduction": 79544.26,
+      "residual": {
+        "mean": 165225.86,
+        "p50": 138566.93,
+        "p90": 315911.01
+      },
+      "risk_id": "R-010"
+    },
+    {
+      "asset_id": "A-11",
+      "draws": 50000,
+      "inherent": {
+        "mean": 70668.15,
+        "p50": 59306.86,
+        "p90": 136000.45
+      },
+      "mean_reduction": 19436.81,
+      "residual": {
+        "mean": 51231.34,
+        "p50": 42661.24,
+        "p90": 99017.51
+      },
+      "risk_id": "R-011"
+    },
+    {
+      "asset_id": "A-12",
+      "draws": 50000,
+      "inherent": {
+        "mean": 5140.67,
+        "p50": 4218.49,
+        "p90": 10163.56
+      },
+      "mean_reduction": 2956.53,
+      "residual": {
+        "mean": 2184.14,
+        "p50": 1757.66,
+        "p90": 4363.68
+      },
+      "risk_id": "R-012"
+    }
+  ],
+  "schema_version": "1.0",
+  "totals": {
+    "inherent_mean_annual_loss": 4415101.41,
+    "mean_reduction": 1185842.23,
+    "residual_mean_annual_loss": 3229259.18,
+    "rows_simulated": 12
+  }
+}

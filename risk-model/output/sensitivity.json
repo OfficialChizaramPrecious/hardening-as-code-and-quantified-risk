@@ -1,0 +1,56 @@
+{
+  "factor": 0.3,
+  "selection_by_case": {
+    "base": {
+      "mean_reduction": 1879860.58,
+      "selected_treatment_ids": [
+        "T-002",
+        "T-006",
+        "T-008"
+      ],
+      "total_cost": 73000.0,
+      "validation": "valid"
+    },
+    "high": {
+      "mean_reduction": 2443818.75,
+      "selected_treatment_ids": [
+        "T-002",
+        "T-006",
+        "T-008"
+      ],
+      "total_cost": 73000.0,
+      "validation": "valid"
+    },
+    "low": {
+      "mean_reduction": 1315902.4,
+      "selected_treatment_ids": [
+        "T-002",
+        "T-006",
+        "T-008"
+      ],
+      "total_cost": 73000.0,
+      "validation": "valid"
+    }
+  },
+  "selection_stable_across_band": true,
+  "totals_by_case": {
+    "base": {
+      "inherent_mean_annual_loss": 4415101.41,
+      "mean_reduction": 1185842.23,
+      "residual_mean_annual_loss": 3229259.18,
+      "rows_simulated": 12
+    },
+    "high": {
+      "inherent_mean_annual_loss": 5739631.83,
+      "mean_reduction": 1541594.9,
+      "residual_mean_annual_loss": 4198036.93,
+      "rows_simulated": 12
+    },
+    "low": {
+      "inherent_mean_annual_loss": 3090570.98,
+      "mean_reduction": 830089.56,
+      "residual_mean_annual_loss": 2260481.43,
+      "rows_simulated": 12
+    }
+  }
+}
