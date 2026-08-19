@@ -75,14 +75,27 @@ rollback_issue_net_content: |
 rollback_login_defs_path: /etc/login.defs
 rollback_umask: "022"
 
-# --- Firewalld (baseline: lo untrusted, no rich rules) ---------------------
+# --- Firewalld -------------------------------------------------------------
 # Baseline state verified before hardening:
 #   active zones: public (eth0), trusted (no interfaces)
-#   trusted zone target ACCEPT, no rich rules anywhere
+#   trusted zone target ACCEPT, no rich rules in any zone
+#
+# The rich rules removed here must match the ones the hardening role adds,
+# character for character, or firewalld will not recognise them for removal.
 rollback_firewall_manage: true
 rollback_firewall_trusted_interfaces:
   - lo
-rollback_firewall_external_zone: public
-rollback_firewall_spoofed_sources:
+rollback_firewall_loopback_rules:
+  - family: ipv4
+    address: "127.0.0.1"
+  - family: ipv6
+    address: "::1"
+
+# Superseded rules from the earlier HR-011 implementation, which placed a
+# blanket drop on loopback sources in the public zone with no destination
+# clause. Removed here so a host hardened by the previous version rolls back
+# cleanly rather than leaving orphaned rules behind.
+rollback_firewall_legacy_zone: public
+rollback_firewall_legacy_sources:
   - 127.0.0.0/8
   - "::1"

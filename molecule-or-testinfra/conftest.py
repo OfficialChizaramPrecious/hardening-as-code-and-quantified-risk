@@ -61,6 +61,13 @@ SSH_DROPIN = "/etc/ssh/sshd_config.d/90-netforge-baseline.conf"
 LIMITS_FILE = "/etc/security/limits.d/90-netforge-baseline.conf"
 LOGIN_DEFS = "/etc/login.defs"
 
+# HR-011 places the anti-spoofing rich rules in the trusted zone, following the
+# benchmark's own remediation text. An earlier implementation used blanket
+# drops in the public zone with no destination clause; the public zone is
+# asserted empty so a regression to that form is caught.
+FIREWALL_LOOPBACK_ZONE = "trusted"
+FIREWALL_EXTERNAL_ZONE = "public"
+
 
 # ---------------------------------------------------------------------------
 # File-backed fixtures - session scoped, no host access
@@ -116,18 +123,30 @@ def sysctl_values(host) -> dict:
     return values
 
 
+def _rich_rules(host, zone: str) -> list:
+    result = host.run("sudo firewall-cmd --zone=%s --list-rich-rules", zone)
+    if result.rc != 0:
+        return []
+    return [line.strip() for line in result.stdout.strip().splitlines() if line.strip()]
+
+
 @pytest.fixture(scope="module")
 def firewalld_state(host) -> dict:
-    """Trusted-zone interfaces and external-zone rich rules."""
-    trusted = host.run("sudo firewall-cmd --zone=trusted --list-interfaces")
-    rich = host.run("sudo firewall-cmd --zone=public --list-rich-rules")
+    """Zone assignments and rich rules for both relevant zones.
+
+    Both zones are captured: the trusted zone carries the anti-spoofing rules,
+    and the public zone must stay clear of them so a regression to the earlier
+    blanket-drop implementation is detected.
+    """
+    trusted_ifaces = host.run(
+        "sudo firewall-cmd --zone=%s --list-interfaces", FIREWALL_LOOPBACK_ZONE
+    )
     return {
-        "trusted_interfaces": trusted.stdout.split() if trusted.rc == 0 else [],
-        "public_rich_rules": [
-            line.strip()
-            for line in (rich.stdout.strip().splitlines() if rich.rc == 0 else [])
-            if line.strip()
-        ],
+        "trusted_interfaces": (
+            trusted_ifaces.stdout.split() if trusted_ifaces.rc == 0 else []
+        ),
+        "trusted_rich_rules": _rich_rules(host, FIREWALL_LOOPBACK_ZONE),
+        "public_rich_rules": _rich_rules(host, FIREWALL_EXTERNAL_ZONE),
     }
 
 

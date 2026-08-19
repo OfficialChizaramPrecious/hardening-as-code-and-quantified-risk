@@ -142,10 +142,11 @@
 # ---------------------------------------------------------------------------
 # HR-011 - Firewalld loopback handling  (SERVICE CONFLICT CONTROL)
 # ---------------------------------------------------------------------------
-# Two-sided by design. Trusting lo preserves the loopback path the 'web' check
-# depends on. Dropping spoofed loopback sources on the external zone is the
-# anti-spoofing half the rule asks for. Applying only the second half breaks
-# the declared service.
+# Two-sided by design, per the benchmark's own remediation text:
+#   trust the lo interface, and drop traffic claiming a loopback SOURCE with a
+#   non-loopback DESTINATION. The destination clause is what makes the control
+#   an anti-spoofing measure rather than a blanket block, and it is why genuine
+#   loopback traffic - including the declared web check - is unaffected.
 - name: HR-011 - ensure firewalld is running
   ansible.builtin.service:
     name: firewalld
@@ -172,15 +173,21 @@
   notify: reload firewalld
   tags: [hr-011, firewall]
 
-- name: HR-011 - drop spoofed loopback sources on the external zone
+- name: HR-011 - restrict spoofed loopback traffic to the loopback interface
   ansible.posix.firewalld:
-    zone: "{{ netforge_firewall_external_zone }}"
-    rich_rule: "rule family={{ 'ipv6' if ':' in item else 'ipv4' }} source address={{ item }} drop"
+    zone: trusted
+    rich_rule: >-
+      rule family={{ item.family }}
+      source address="{{ item.address }}"
+      destination not address="{{ item.address }}"
+      drop
     permanent: true
     immediate: true
     state: enabled
   become: true
-  loop: "{{ netforge_firewall_spoofed_sources }}"
+  loop: "{{ netforge_firewall_loopback_rules }}"
+  loop_control:
+    label: "{{ item.family }} {{ item.address }}"
   when:
     - netforge_apply_firewall | bool
     - netforge_firewall_manage | bool

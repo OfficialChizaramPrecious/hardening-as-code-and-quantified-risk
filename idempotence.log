@@ -1,5 +1,5 @@
 Stage 8 unattended lifecycle
-Started:  2026-08-19T08:26:04Z
+Started:  2026-08-19T10:14:56Z
 Host:     nf-grc-a4-rocky
 OS:       
 Marker:   synthetic-service-marker=UBI-A8-0725D08E95BE
@@ -9,7 +9,7 @@ Baseline: /project/before/sshd-effective.txt
 
 ===============================================================
 STAGE: 1/8 baseline service tests
-TIME:  2026-08-19T08:26:07Z
+TIME:  2026-08-19T10:15:04Z
 ===============================================================
 synthetic-service-marker=UBI-A8-0725D08E95BE
 active
@@ -19,7 +19,7 @@ RESULT: PASS - service contract exit 0
 
 ===============================================================
 STAGE: 2/8 apply hardening
-TIME:  2026-08-19T08:26:08Z
+TIME:  2026-08-19T10:15:06Z
 ===============================================================
 
 PLAY [Apply netforge host hardening] *******************************************
@@ -66,9 +66,9 @@ ok: [localhost]
 TASK [hardening-role : HR-011 - trust the loopback interface] ******************
 changed: [localhost] => (item=lo)
 
-TASK [hardening-role : HR-011 - drop spoofed loopback sources on the external zone] ***
-changed: [localhost] => (item=127.0.0.0/8)
-changed: [localhost] => (item=::1)
+TASK [hardening-role : HR-011 - restrict spoofed loopback traffic to the loopback interface] ***
+changed: [localhost] => (item=ipv4 127.0.0.1)
+changed: [localhost] => (item=ipv6 ::1)
 
 RUNNING HANDLER [hardening-role : validate sshd configuration] *****************
 ok: [localhost]
@@ -86,7 +86,7 @@ RESULT: PASS - apply completed with 12 changed task(s)
 
 ===============================================================
 STAGE: 3/8 second apply (idempotence)
-TIME:  2026-08-19T08:27:07Z
+TIME:  2026-08-19T10:16:25Z
 ===============================================================
 
 PLAY [Apply netforge host hardening] *******************************************
@@ -133,9 +133,9 @@ ok: [localhost]
 TASK [hardening-role : HR-011 - trust the loopback interface] ******************
 ok: [localhost] => (item=lo)
 
-TASK [hardening-role : HR-011 - drop spoofed loopback sources on the external zone] ***
-ok: [localhost] => (item=127.0.0.0/8)
-ok: [localhost] => (item=::1)
+TASK [hardening-role : HR-011 - restrict spoofed loopback traffic to the loopback interface] ***
+ok: [localhost] => (item=ipv4 127.0.0.1)
+ok: [localhost] => (item=ipv6 ::1)
 
 PLAY RECAP *********************************************************************
 localhost                  : ok=13   changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
@@ -144,20 +144,20 @@ RESULT: PASS - second apply reported changed=0
 
 ===============================================================
 STAGE: 4/8 service tests (hardened)
-TIME:  2026-08-19T08:27:43Z
+TIME:  2026-08-19T10:17:38Z
 ===============================================================
 synthetic-service-marker=UBI-A8-0725D08E95BE
 active
 active
 active
 RESULT: PASS - service contract exit 0
-.......................................................                  [100%]
-55 passed in 8.14s
+.........................................................                [100%]
+57 passed in 16.51s
 RESULT: PASS - acceptance suite green on hardened host
 
 ===============================================================
 STAGE: 5/8 rollback
-TIME:  2026-08-19T08:27:52Z
+TIME:  2026-08-19T10:18:03Z
 ===============================================================
 
 PLAY [Roll back netforge host hardening] ***************************************
@@ -198,12 +198,16 @@ changed: [localhost]
 TASK [rollback : RB-010 - restore baseline umask in login.defs] ****************
 changed: [localhost]
 
+TASK [rollback : RB-011 - remove the loopback anti-spoofing rich rules] ********
+changed: [localhost] => (item=ipv4 127.0.0.1)
+changed: [localhost] => (item=ipv6 ::1)
+
+TASK [rollback : RB-011 - remove superseded public-zone loopback drop rules] ***
+ok: [localhost] => (item=127.0.0.0/8)
+ok: [localhost] => (item=::1)
+
 TASK [rollback : RB-011 - remove loopback from the trusted zone] ***************
 changed: [localhost] => (item=lo)
-
-TASK [rollback : RB-011 - remove spoofed loopback drop rules] ******************
-changed: [localhost] => (item=127.0.0.0/8)
-changed: [localhost] => (item=::1)
 
 RUNNING HANDLER [rollback : validate sshd configuration] ***********************
 ok: [localhost]
@@ -215,13 +219,13 @@ RUNNING HANDLER [rollback : reload firewalld] **********************************
 changed: [localhost]
 
 PLAY RECAP *********************************************************************
-localhost                  : ok=17   changed=14   unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+localhost                  : ok=18   changed=14   unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
 changed tasks on rollback: 14
 RESULT: PASS - rollback completed with 14 changed task(s)
 
 ===============================================================
 STAGE: 6/8 baseline verification
-TIME:  2026-08-19T08:28:27Z
+TIME:  2026-08-19T10:19:46Z
 ===============================================================
 RESULT: PASS - sshd effective config matches the captured baseline exactly
 RESULT: PASS - baseline sshd defect restored (permitrootlogin yes)
@@ -236,7 +240,7 @@ RESULT: PASS - service contract exit 0
 
 ===============================================================
 STAGE: 7/8 reapply
-TIME:  2026-08-19T08:28:28Z
+TIME:  2026-08-19T10:19:48Z
 ===============================================================
 
 PLAY [Apply netforge host hardening] *******************************************
@@ -283,9 +287,9 @@ ok: [localhost]
 TASK [hardening-role : HR-011 - trust the loopback interface] ******************
 changed: [localhost] => (item=lo)
 
-TASK [hardening-role : HR-011 - drop spoofed loopback sources on the external zone] ***
-changed: [localhost] => (item=127.0.0.0/8)
-changed: [localhost] => (item=::1)
+TASK [hardening-role : HR-011 - restrict spoofed loopback traffic to the loopback interface] ***
+changed: [localhost] => (item=ipv4 127.0.0.1)
+changed: [localhost] => (item=ipv6 ::1)
 
 RUNNING HANDLER [hardening-role : validate sshd configuration] *****************
 ok: [localhost]
@@ -345,9 +349,9 @@ ok: [localhost]
 TASK [hardening-role : HR-011 - trust the loopback interface] ******************
 ok: [localhost] => (item=lo)
 
-TASK [hardening-role : HR-011 - drop spoofed loopback sources on the external zone] ***
-ok: [localhost] => (item=127.0.0.0/8)
-ok: [localhost] => (item=::1)
+TASK [hardening-role : HR-011 - restrict spoofed loopback traffic to the loopback interface] ***
+ok: [localhost] => (item=ipv4 127.0.0.1)
+ok: [localhost] => (item=ipv6 ::1)
 
 PLAY RECAP *********************************************************************
 localhost                  : ok=13   changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
@@ -361,17 +365,17 @@ RESULT: PASS - service contract exit 0
 
 ===============================================================
 STAGE: 8/8 final acceptance suite
-TIME:  2026-08-19T08:29:52Z
+TIME:  2026-08-19T10:21:45Z
 ===============================================================
-.......................................................                  [100%]
+.........................................................                [100%]
 --------------- generated xml file: /project/service-results.xml ---------------
-55 passed in 7.23s
+57 passed in 12.47s
 RESULT: PASS - acceptance suite green, service-results.xml regenerated
 
 ===============================================================
 STAGE: SUMMARY
-TIME:  2026-08-19T08:30:00Z
+TIME:  2026-08-19T10:21:59Z
 ===============================================================
-Finished:      2026-08-19T08:30:00Z
+Finished:      2026-08-19T10:21:59Z
 Failed stages: 0
 LIFECYCLE RESULT: PASS

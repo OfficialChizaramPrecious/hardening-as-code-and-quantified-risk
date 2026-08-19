@@ -151,6 +151,44 @@
 
 # --- Firewalld -------------------------------------------------------------
 # Baseline had lo unassigned to any zone and no rich rules anywhere.
+#
+# The rich-rule strings must match those the hardening role added, character
+# for character, or firewalld will not recognise them for removal.
+- name: RB-011 - remove the loopback anti-spoofing rich rules
+  ansible.posix.firewalld:
+    zone: trusted
+    rich_rule: >-
+      rule family={{ item.family }}
+      source address="{{ item.address }}"
+      destination not address="{{ item.address }}"
+      drop
+    permanent: true
+    immediate: true
+    state: disabled
+  become: true
+  loop: "{{ rollback_firewall_loopback_rules }}"
+  loop_control:
+    label: "{{ item.family }} {{ item.address }}"
+  when: rollback_firewall_manage | bool
+  notify: reload firewalld
+  tags: [rb-011, firewall]
+
+# Superseded rules from the earlier HR-011 implementation. Removing them keeps
+# rollback correct for a host hardened by the previous version, rather than
+# leaving orphaned rules that would never be cleaned up.
+- name: RB-011 - remove superseded public-zone loopback drop rules
+  ansible.posix.firewalld:
+    zone: "{{ rollback_firewall_legacy_zone }}"
+    rich_rule: "rule family={{ 'ipv6' if ':' in item else 'ipv4' }} source address={{ item }} drop"
+    permanent: true
+    immediate: true
+    state: disabled
+  become: true
+  loop: "{{ rollback_firewall_legacy_sources }}"
+  when: rollback_firewall_manage | bool
+  notify: reload firewalld
+  tags: [rb-011, firewall]
+
 - name: RB-011 - remove loopback from the trusted zone
   ansible.posix.firewalld:
     zone: trusted
@@ -160,19 +198,6 @@
     state: disabled
   become: true
   loop: "{{ rollback_firewall_trusted_interfaces }}"
-  when: rollback_firewall_manage | bool
-  notify: reload firewalld
-  tags: [rb-011, firewall]
-
-- name: RB-011 - remove spoofed loopback drop rules
-  ansible.posix.firewalld:
-    zone: "{{ rollback_firewall_external_zone }}"
-    rich_rule: "rule family={{ 'ipv6' if ':' in item else 'ipv4' }} source address={{ item }} drop"
-    permanent: true
-    immediate: true
-    state: disabled
-  become: true
-  loop: "{{ rollback_firewall_spoofed_sources }}"
   when: rollback_firewall_manage | bool
   notify: reload firewalld
   tags: [rb-011, firewall]

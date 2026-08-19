@@ -1,0 +1,15 @@
+
+  [WARNING]: Test PKGS-7350 had a long execution: 46.345248 seconds
+
+
+  [WARNING]: Test PKGS-7352 had a long execution: 11.639848 seconds
+
+
+  [WARNING]: Test PKGS-7354 had a long execution: 16.093145 seconds
+
+
+  [WARNING]: Test NETW-2600 had a long execution: 18.816640 seconds
+
+
+  [WARNING]: Test KRNL-6000 had a long execution: 15.835629 seconds
+

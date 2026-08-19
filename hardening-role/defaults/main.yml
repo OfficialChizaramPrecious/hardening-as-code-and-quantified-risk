@@ -80,20 +80,37 @@ netforge_umask: "027"
 # ---------------------------------------------------------------------------
 # HR-011 - Firewalld loopback handling  (SERVICE CONFLICT CONTROL)
 # ---------------------------------------------------------------------------
-# The control has two sides. Trusting lo keeps loopback working, which the
-# 'web' check depends on. Restricting spoofed loopback sources on other
-# interfaces is the anti-spoofing half the rule actually asks for.
+# The control has two sides, and the benchmark states both explicitly:
 #
-# SERVICE-CRITICAL: removing "lo" from netforge_firewall_trusted_interfaces,
-# or applying the drop rules to the trusted zone, blocks
+#   "The loopback traffic must be trusted by assigning the lo interface to the
+#    firewalld trusted zone. However, the loopback traffic must be restricted
+#    to the loopback interface as an anti-spoofing measure."
+#
+# The restriction is NOT a blanket drop on loopback addresses. It drops traffic
+# that claims a loopback SOURCE while carrying a non-loopback DESTINATION -
+# that is, spoofed traffic. Genuine loopback-to-loopback traffic is unaffected,
+# which is why curl http://127.0.0.1:8080/ keeps working.
+#
+# An earlier implementation dropped 127.0.0.0/8 in the public zone with no
+# destination clause. The service survived only because the rule sat in the
+# wrong zone; the anti-spoofing measure was not doing what the rule intends.
+# The rule's own remediation text is followed here instead.
+#
+# SERVICE-CRITICAL: removing "lo" from netforge_firewall_trusted_interfaces, or
+# dropping the destination clause from the rich rules, blocks
 # curl http://127.0.0.1:8080/ and constitutes a forbidden regression.
 netforge_firewall_manage: true
 netforge_firewall_trusted_interfaces:
   - lo
-netforge_firewall_external_zone: public
-netforge_firewall_spoofed_sources:
-  - 127.0.0.0/8
-  - "::1"
+
+# Each entry becomes a rich rule in the trusted zone of the form:
+#   rule family=<family> source address="<address>"
+#        destination not address="<address>" drop
+netforge_firewall_loopback_rules:
+  - family: ipv4
+    address: "127.0.0.1"
+  - family: ipv6
+    address: "::1"
 
 # ---------------------------------------------------------------------------
 # Control toggles
