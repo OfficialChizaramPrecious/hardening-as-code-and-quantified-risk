@@ -1,0 +1,16 @@
+---
+# Rollback entry point.
+#
+#   ansible-playbook rollback.yml
+#
+# Returns a hardened host to the declared baseline. Reapply afterwards with:
+#   ansible-playbook site.yml
+
+- name: Roll back netforge host hardening
+  hosts: localhost
+  connection: local
+  become: true
+  gather_facts: true
+
+  roles:
+    - role: rollback

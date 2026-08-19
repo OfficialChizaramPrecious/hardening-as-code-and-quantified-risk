@@ -1,0 +1,178 @@
+---
+# Netforge rollback role.
+#
+# Restores the declared baseline state, deliberate defects included. This is a
+# restore against recorded facts, not an inverse playbook: each task declares
+# the baseline as its desired state using the same template mechanism as the
+# hardening role, so rollback is itself idempotent.
+#
+# The FAQ is explicit that reverting a VM snapshot does not prove the submitted
+# rollback automation. This role must return a hardened host to baseline with
+# no snapshot involved, and must permit a clean reapply afterwards.
+
+# --- SSH -------------------------------------------------------------------
+- name: RB-001/002 - restore baseline sshd drop-in
+  ansible.builtin.template:
+    src: sshd-baseline.conf.j2
+    dest: "{{ rollback_ssh_dropin_path }}"
+    owner: root
+    group: root
+    mode: "{{ rollback_ssh_dropin_mode }}"
+    validate: /usr/sbin/sshd -t -f %s
+  become: true
+  notify: restart sshd
+  tags: [rb-001, rb-002, ssh]
+
+# --- Web content -----------------------------------------------------------
+# Restores mode 0666. This reinstates a genuine defect, which is correct:
+# rollback returns the host to baseline. The SELinux type is retained because
+# it was environment preparation (DL-004), not a hardening change.
+- name: RB-003 - restore baseline web content permissions
+  ansible.builtin.file:
+    path: "{{ rollback_web_index }}"
+    state: file
+    owner: "{{ rollback_web_owner }}"
+    group: "{{ rollback_web_group }}"
+    mode: "{{ rollback_web_file_mode }}"
+    setype: "{{ rollback_web_selinux_type }}"
+  become: true
+  tags: [rb-003, web]
+
+# --- Core dumps ------------------------------------------------------------
+- name: RB-004 - restore baseline core dump limits
+  ansible.builtin.template:
+    src: limits-baseline.conf.j2
+    dest: "{{ rollback_limits_path }}"
+    owner: root
+    group: root
+    mode: "{{ rollback_limits_mode }}"
+  become: true
+  tags: [rb-004, coredump]
+
+- name: RB-004 - remove systemd coredump storage setting
+  ansible.builtin.lineinfile:
+    path: "{{ rollback_coredump_conf_path }}"
+    regexp: '^\s*Storage\s*='
+    line: "#Storage=external"
+    owner: root
+    group: root
+    mode: "0644"
+  become: true
+  tags: [rb-004, coredump]
+
+- name: RB-004 - remove systemd coredump backtrace setting
+  ansible.builtin.lineinfile:
+    path: "{{ rollback_coredump_conf_path }}"
+    regexp: '^\s*ProcessSizeMax\s*='
+    line: "#ProcessSizeMax=2G"
+    owner: root
+    group: root
+    mode: "0644"
+  become: true
+  tags: [rb-004, coredump]
+
+# --- Kernel parameters -----------------------------------------------------
+# The baseline had no persisted sysctl declaration for any of these keys, so
+# removing the hardening file restores that state.
+- name: RB-005/006/007/008 - remove persisted hardening sysctl file
+  ansible.builtin.file:
+    path: "{{ rollback_sysctl_file }}"
+    state: absent
+  become: true
+  tags: [rb-005, rb-006, rb-007, rb-008, sysctl]
+
+# baseline.sh set net.ipv4.conf.all.accept_redirects with `sysctl -w` and never
+# persisted it. Rollback reproduces exactly that: the running value restored,
+# with no file on disk declaring it.
+#
+# The value is read first and written only where it differs. An earlier design
+# wrote through a temporary sysctl file and then deleted it, which reported
+# changed on every run - a real non-idempotence, not a reporting artefact.
+# changed_when here is bound to an actual invariant: whether the running value
+# already matches the baseline.
+- name: RB-005 - read current runtime kernel values
+  ansible.builtin.command:
+    cmd: "sysctl -n {{ item.key }}"
+  become: true
+  loop: "{{ rollback_sysctl_runtime | dict2items }}"
+  loop_control:
+    label: "{{ item.key }}"
+  register: rollback_sysctl_current
+  changed_when: false
+  check_mode: false
+  tags: [rb-005, sysctl]
+
+- name: RB-005 - restore baseline runtime kernel values where they differ
+  ansible.builtin.command:
+    cmd: "sysctl -w {{ item.item.key }}={{ item.item.value }}"
+  become: true
+  loop: "{{ rollback_sysctl_current.results }}"
+  loop_control:
+    label: "{{ item.item.key }}"
+  when: item.stdout | default('') | trim != item.item.value | string
+  changed_when: item.stdout | default('') | trim != item.item.value | string
+  tags: [rb-005, sysctl]
+
+# --- Banners ---------------------------------------------------------------
+# Content provenance is documented in defaults/main.yml and
+# before/banner-provenance.txt: the 9.8 package disagrees with the 9.3 host
+# baseline, and the host baseline is authoritative.
+- name: RB-009 - restore baseline /etc/issue
+  ansible.builtin.copy:
+    content: "{{ rollback_issue_content }}"
+    dest: "{{ rollback_issue_path }}"
+    owner: root
+    group: root
+    mode: "{{ rollback_banner_mode }}"
+  become: true
+  tags: [rb-009, banner]
+
+- name: RB-009 - restore baseline /etc/issue.net
+  ansible.builtin.copy:
+    content: "{{ rollback_issue_net_content }}"
+    dest: "{{ rollback_issue_net_path }}"
+    owner: root
+    group: root
+    mode: "{{ rollback_banner_mode }}"
+  become: true
+  tags: [rb-009, banner]
+
+# --- umask -----------------------------------------------------------------
+- name: RB-010 - restore baseline umask in login.defs
+  ansible.builtin.lineinfile:
+    path: "{{ rollback_login_defs_path }}"
+    regexp: '^\s*UMASK\s+'
+    line: "UMASK\t\t{{ rollback_umask }}"
+    owner: root
+    group: root
+    mode: "0644"
+  become: true
+  tags: [rb-010, umask]
+
+# --- Firewalld -------------------------------------------------------------
+# Baseline had lo unassigned to any zone and no rich rules anywhere.
+- name: RB-011 - remove loopback from the trusted zone
+  ansible.posix.firewalld:
+    zone: trusted
+    interface: "{{ item }}"
+    permanent: true
+    immediate: true
+    state: disabled
+  become: true
+  loop: "{{ rollback_firewall_trusted_interfaces }}"
+  when: rollback_firewall_manage | bool
+  notify: reload firewalld
+  tags: [rb-011, firewall]
+
+- name: RB-011 - remove spoofed loopback drop rules
+  ansible.posix.firewalld:
+    zone: "{{ rollback_firewall_external_zone }}"
+    rich_rule: "rule family={{ 'ipv6' if ':' in item else 'ipv4' }} source address={{ item }} drop"
+    permanent: true
+    immediate: true
+    state: disabled
+  become: true
+  loop: "{{ rollback_firewall_spoofed_sources }}"
+  when: rollback_firewall_manage | bool
+  notify: reload firewalld
+  tags: [rb-011, firewall]

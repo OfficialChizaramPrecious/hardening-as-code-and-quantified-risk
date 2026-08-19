@@ -1,0 +1,88 @@
+---
+# Rollback role - restores the declared baseline state.
+#
+# These values are the BASELINE, not hardened values. Rolling back returns the
+# host to the state captured in before/, defects included. That is the point:
+# the brief requires rollback to restore baseline service and configuration
+# hashes, and the FAQ states that reverting a VM snapshot does not prove the
+# submitted rollback automation.
+#
+# Every value below was read from the live baseline host before hardening was
+# applied, and is evidenced in before/.
+
+# --- SSH (baseline: PermitRootLogin yes, PasswordAuthentication yes) --------
+rollback_ssh_dropin_path: /etc/ssh/sshd_config.d/90-netforge-baseline.conf
+rollback_ssh_dropin_mode: "0644"
+rollback_ssh_permit_root_login: "yes"
+rollback_ssh_password_authentication: "yes"
+
+# --- Web content (baseline: mode 0666, owner nginx) ------------------------
+# The SELinux type is retained. It was applied as environment preparation
+# (DL-004) before the baseline capture, not as a remediation, so it is part of
+# the baseline rather than something hardening introduced.
+rollback_web_root: /srv/netforge-service
+rollback_web_index: /srv/netforge-service/index.html
+rollback_web_owner: nginx
+rollback_web_group: nginx
+rollback_web_file_mode: "0666"
+rollback_web_dir_mode: "0755"
+rollback_web_selinux_type: httpd_sys_content_t
+
+# --- Core dumps (baseline: * soft core unlimited) --------------------------
+rollback_limits_path: /etc/security/limits.d/90-netforge-baseline.conf
+rollback_limits_mode: "0644"
+rollback_coredump_conf_path: /etc/systemd/coredump.conf
+
+# --- Kernel parameters -----------------------------------------------------
+# The hardening role wrote a dedicated file. Rollback removes it, then restores
+# the runtime value baseline.sh set with sysctl -w.
+#
+# baseline.sh applied accept_redirects=1 at runtime only and never persisted
+# it, so removing the hardening file plus setting the runtime value reproduces
+# the baseline exactly. The other five keys had no baseline declaration and no
+# altered runtime value, so removing the file is sufficient for them.
+rollback_sysctl_file: /etc/sysctl.d/60-netforge-hardening.conf
+rollback_sysctl_runtime:
+  net.ipv4.conf.all.accept_redirects: 1
+
+# --- Banners ---------------------------------------------------------------
+# PROVENANCE: capture-baseline.sh does not capture /etc/issue. The baseline
+# content was recovered from the `ansible-playbook --check --diff` run executed
+# against the live unmodified host before any change:
+#     -\S
+#     -Kernel \r on an \m
+#
+# A cross-check against the owning package was attempted and DISAGREED:
+#   rpm -qf /etc/issue      -> rocky-release-9.3-1.2.el9 (this host)
+#   dnf download            -> rocky-release-9.8-1.2.el9 (repo head)
+#   9.8 package content     -> "Kernel \r on \m"
+#   9.3 host baseline       -> "Kernel \r on an \m"
+#
+# Rocky altered the string between 9.3 and 9.8. Restoring from the repo head
+# would write a file that never existed on this host, so the pre-change diff is
+# treated as authoritative. Evidence: before/banner-provenance.txt
+rollback_issue_path: /etc/issue
+rollback_issue_net_path: /etc/issue.net
+rollback_banner_mode: "0644"
+rollback_issue_content: |
+  \S
+  Kernel \r on an \m
+rollback_issue_net_content: |
+  \S
+  Kernel \r on an \m
+
+# --- umask (baseline: 022) -------------------------------------------------
+rollback_login_defs_path: /etc/login.defs
+rollback_umask: "022"
+
+# --- Firewalld (baseline: lo untrusted, no rich rules) ---------------------
+# Baseline state verified before hardening:
+#   active zones: public (eth0), trusted (no interfaces)
+#   trusted zone target ACCEPT, no rich rules anywhere
+rollback_firewall_manage: true
+rollback_firewall_trusted_interfaces:
+  - lo
+rollback_firewall_external_zone: public
+rollback_firewall_spoofed_sources:
+  - 127.0.0.0/8
+  - "::1"

@@ -1,0 +1,31 @@
+=== Baseline banner provenance 2026-08-19T01:54:13Z ===
+
+capture-baseline.sh does not capture /etc/issue or /etc/issue.net.
+Baseline content was recovered from the ansible-playbook --check --diff run
+executed against the live unmodified host before any change was applied.
+
+Recorded diff (pre-change host state, lines prefixed -):
+    -\S
+    -Kernel \r on an \m
+
+CROSS-CHECK ATTEMPTED AGAINST OWNING PACKAGE:
+  rpm -qf /etc/issue  -> rocky-release-9.3-1.2.el9.noarch  (this host)
+  dnf download        -> rocky-release-9.8-1.2.el9.noarch  (repo head)
+
+Content of the 9.8 package:
+    \S
+    Kernel \r on \m
+    
+
+RESULT: the sources DISAGREE.
+  9.8 package     reads  'Kernel \r on \m'
+  9.3 host baseline reads 'Kernel \r on an \m'
+Rocky altered the string between 9.3 and 9.8.
+
+DECISION: rollback restores the 9.3 host baseline, evidenced by the
+pre-change diff. Restoring from the repo head would have written a file that
+never existed on this host and would have failed a byte comparison against
+the baseline.
+
+CONFIDENCE: high for the host baseline. The diff was produced by Ansible
+reading the live file, not reconstructed from memory or documentation.

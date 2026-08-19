@@ -1,0 +1,6 @@
+# Restored by the netforge rollback role.
+# Reproduces the baseline drop-in written by baseline.sh, including its
+# deliberate defects. Rollback returns the host to baseline, not to a
+# hardened-but-different state.
+PermitRootLogin {{ rollback_ssh_permit_root_login }}
+PasswordAuthentication {{ rollback_ssh_password_authentication }}
