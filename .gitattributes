@@ -1,5 +1,17 @@
-﻿* text=auto
+﻿# Text files are normalised to LF so they work in the Linux guest.
+* text=auto
 *.sh text eol=lf
 Vagrantfile text eol=lf
 *.yml text eol=lf
+*.yaml text eol=lf
 *.py text eol=lf
+
+# Raw evidence is preserved byte for byte. The submission contract requires
+# raw exports in their native format, and manifest.sha256 must reconcile
+# against the bytes the scanners actually produced. Marking these paths as
+# binary stops any line-ending conversion on checkout.
+before/** -text
+after/** -text
+raw-evidence/** -text
+service-results.xml -text
+idempotence.log -text
