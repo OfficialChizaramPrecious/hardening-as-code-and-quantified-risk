@@ -20,7 +20,9 @@ from __future__ import annotations
 
 from pathlib import Path
 
-FALSE_POSITIVE_EVIDENCE = Path("/project/lab/before/false-positive-analysis.txt")
+FALSE_POSITIVE_EVIDENCE = Path("/project/before/false-positive-analysis.txt")
+HARDENING_DEFAULTS = Path("/project/hardening-role/defaults/main.yml")
+HARDENING_TASKS = Path("/project/hardening-role/tasks/main.yml")
 
 
 # ---------------------------------------------------------------------------
@@ -91,17 +93,14 @@ def test_nginx_still_serving_after_all_remediations(host):
 def test_hardening_role_never_removes_nginx():
     """The role declares the intent explicitly rather than leaving it implied
     by absence, so a reader can see the decision in code."""
-    defaults = Path("/project/hardening-role/defaults/main.yml").read_text(
-        encoding="utf-8"
-    )
+    defaults = HARDENING_DEFAULTS.read_text(encoding="utf-8")
     assert "netforge_remove_nginx: false" in defaults
 
 
 def test_no_task_removes_the_nginx_package():
     """Guard against a future edit quietly adding a package-removal task."""
-    tasks = Path("/project/hardening-role/tasks/main.yml").read_text(encoding="utf-8")
-    lowered = tasks.lower()
-    assert "state: absent" not in lowered or "nginx" not in lowered, (
+    tasks = HARDENING_TASKS.read_text(encoding="utf-8").lower()
+    assert "state: absent" not in tasks or "nginx" not in tasks, (
         "a task may remove the nginx package"
     )
 

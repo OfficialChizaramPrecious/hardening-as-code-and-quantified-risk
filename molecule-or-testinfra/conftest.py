@@ -27,8 +27,8 @@ import yaml
 PROJECT_ROOT = Path("/project")
 SERVICE_CONTRACT = PROJECT_ROOT / "lab" / "service-contract.yml"
 REMEDIATION_DESIGN = PROJECT_ROOT / "lab" / "remediations.yml"
-DECLARED_CONFIG = PROJECT_ROOT / "lab" / "before" / "declared-config.json"
-BASELINE_DIR = PROJECT_ROOT / "lab" / "before"
+BASELINE_DIR = PROJECT_ROOT / "before"
+DECLARED_CONFIG = BASELINE_DIR / "declared-config.json"
 
 # Read from the running service rather than asserted as a literal: the tests
 # check that the host serves the marker it was built with, and that it is not
