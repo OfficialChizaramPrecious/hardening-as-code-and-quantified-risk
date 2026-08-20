@@ -16,7 +16,7 @@ Repository: `northstar-health-iso27001-evidence-audit`
 Frozen commit: **`34a34fa`**
 Evidence marker: **`UBI-A7-0587AC868B8B`**
 
-### What I reused literally
+### What I reused
 
 **The evidence-index schema.** Twelve columns, unchanged since Stage 6, which I carried forward without modifying them:
 
@@ -32,7 +32,7 @@ I also reused the assessment-manifest structure from the same common template.
 
 ### What I reused as method rather than as code
 
-I want to state this plainly rather than overclaim it.
+Let me state this plainly
 
 Stage 7's engine assigned qualitative verdicts to audit evidence. Stage 8's model calculates quantitative loss distributions from risk parameters. The two domains are different, so I did not carry the Python code across. What I carried across was the design discipline, and I can point to a specific Stage 7 component and a specific Stage 8 test for each one.
 
@@ -104,7 +104,7 @@ The contract requires a migration record for every incompatible change. There ar
 
 ## 5. Handoff to Stage 9
 
-The GRC track carries the typed control and evidence model through vendor assurance, audit, technical treatment, and breach governance. Stage 8 is technical treatment. Stage 9 is breach governance, and this is what I am handing forward.
+The GRC track carries the typed control and evidence model through vendor assurance, audit, technical treatment, and breach governance. Stage 8 is technical treatment. Stage 8 is technical treatment. Stage 9 is Build a Breach Governance Engine — Recover, decide, and stand behind the result, and this is what I am handing forward.
 
 ### Residual risks
 
