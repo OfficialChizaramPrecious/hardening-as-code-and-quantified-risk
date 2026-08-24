@@ -1,0 +1,70 @@
+{
+  "schema_version": "1.0",
+  "project_id": "GRC-A4",
+  "variant": "V5",
+  "candidate_binding": "UBI-2026-0099",
+  "assigned_pack": {
+    "file_name": "grc-stage-8-shared-b2.tar.gz",
+    "sha256": "d2d2e982b6a442a50ff989edab5e343b173eebd80414ca38e40b8b4864ffd332",
+    "manifest_signature": "cb9bdf5a101b2f15c66858d15fe6386b6eb16c5a390b475f20ef9ccf521724ee",
+    "verified_before_use": true
+  },
+  "commit": "8c6117ace86eb5d9b52ba6dbc25e0e31b2ad9275",
+  "supported_environment": {
+    "os": "Microsoft Windows 11 Pro",
+    "cpu": "Intel(R) Celeron(R) N4020 CPU @ 1.10GHz",
+    "memory_gb": 4,
+    "tool_versions": {
+      "Python": "3.11.9",
+      "pytest_workstation": "9.1.1",
+      "Vagrant": "2.4.9",
+      "VirtualBox": "7.2.4"
+    }
+  },
+  "commands": {
+    "provision": "provision.sh",
+    "build": "lifecycle.sh",
+    "test": "python -m pytest risk-model\\tests -q; python -m pytest molecule-or-testinfra\\ -q",
+    "clean": "ansible-playbook rollback.yml"
+  },
+  "results": {
+    "public_tests": {
+      "passed": 240,
+      "failed": 0,
+      "report": "service-results.xml and risk-model test output"
+    },
+    "runtime_seconds": 10.36,
+    "peak_memory_mb": 52.78,
+    "output_hashes": {
+      "risk-model/output/risk-model-results.json": "A089D66BE833BB137A49C4B45CA527786B2F4D536ACDB57A19AC557D503A4EE3",
+      "risk-model/output/sensitivity.json": "727BB3D719A26B3A0A5D1D4ED1380332D165F5A5E32F1235A51FE186BD5BB198",
+      "risk-model/output/treatment-selection.json": "FDA322ED387FAB4D0BB4F061C528F696EED3C884F76ADC19E8067F98EE58A1BF",
+      "service-results.xml": "CE4CA8B6A642623591F2BE049E3ACAE432F9FABC7AE0D2BABB30AC50096DF599"
+    }
+  },
+  "inputs": [
+    "raw-evidence/evidence/brief/brief.md",
+    "raw-evidence/evidence/common/assessment-manifest-template.json",
+    "raw-evidence/evidence/common/submission-contract.md",
+    "before/",
+    "risk-model/input/model-input.json",
+    "risk-register.csv"
+  ],
+  "outputs": [
+    "evidence-index.csv",
+    "service-results.xml",
+    "risk-model/output/risk-model-results.json",
+    "risk-model/output/sensitivity.json",
+    "risk-model/output/treatment-selection.json",
+    "video-url.txt"
+  ],
+  "manual_preconditions": [
+    "Use the assigned fresh Debian 12 or Rocky Linux 9 VM for the scored host assessment.",
+    "Use the exact data-stream path and profile ID recorded in the baseline evidence.",
+    "Verify the assigned archive SHA-256 before use.",
+    "Reproduce the central claims during the recorded defense."
+  ],
+  "known_limitations": [
+    "The hardening assessment demonstrates measurable security improvement on the supplied Rocky Linux host and declared service contract, but it does not establish full CIS compliance. OpenSCAP still reports failed rules after remediation, and the brief requires the known false positive and service-conflicting remediation to be treated according to their documented dispositions rather than blindly remediated.",
+  "The host acceptance evidence is bounded by the supplied service contract and acceptance suite. Passing the 57 acceptance tests demonstrates preservation of the declared services and controls tested by the suite, but does not prove that every possible application workload or configuration outside that contract is unaffected.",
+  ]
