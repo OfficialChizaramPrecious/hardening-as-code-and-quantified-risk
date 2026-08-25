@@ -14,12 +14,12 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent
 
 CLAIMS = [
-    ("C-001", "Setup", "The assigned evidence archive was verified against the dashboard SHA-256 before extraction.",
+    ("C-001", "Setup", "The shared B1 base evidence archive was verified against its recorded SHA-256 before extraction.",
      "raw-evidence/grc-stage-8-shared-b1.tar.gz", "whole file, 11977 bytes",
-     "The archive analysed is byte-identical to the one issued for set D5.",
-     "Does not prove the contents were interpreted correctly, only that they are unaltered.",
-     "high", "The archive could have been re-downloaded after modification.",
-     "Retained: the hash matches the dashboard value recorded before extraction."),
+     "The preserved B1 base archive is byte-identical to the archive whose SHA-256 was recorded before use.",
+     "Does not prove that B1 is the private assignment overlay; the current assessment manifest identifies the private assigned pack separately as B2.",
+     "high", "Treating the B1 shared archive as the private assigned pack would conflict with assessment-manifest.json.",
+     "Corrected: B1 is described as the shared base archive; the private B2 assignment is represented separately by assessment-manifest.json."),
 
     ("C-002", "Baseline", "The OpenSCAP profile was enumerated rather than guessed, and CIS Level 1 Server selected.",
      "before/oscap-info.txt", "Profiles block, id xccdf_org.ssgproject.content_profile_cis_server_l1",
@@ -112,9 +112,9 @@ CLAIMS = [
      "medium", "The index could move for unrelated reasons.",
      "Retained as corroboration only."),
 
-    ("C-015", "Idempotence", "The unattended lifecycle passed all eight stages, with the second apply reporting changed=0.",
-     "idempotence.log", "STAGE 3/8 recap and LIFECYCLE RESULT line",
-     "The role is idempotent and the full baseline-harden-rollback-reapply cycle completes unattended.",
+    ("C-015", "Idempotence", "The unattended lifecycle passed all eight stages, with the second apply and second reapply both reporting changed=0.",
+     "idempotence.log", "STAGE 3/8, STAGE 7/8 recap and LIFECYCLE RESULT line",
+     "The role completed the baseline, hardening, rollback and reapply lifecycle successfully and reported zero changes on repeated applies.",
      "Does not prove idempotence under every possible starting state.",
      "high", "changed=0 could be produced by suppressing change reporting.",
      "Weakened: no task uses changed_when false except a read-only sshd validator."),
@@ -183,16 +183,42 @@ if missing:
         print("  ", m, file=sys.stderr)
     sys.exit(1)
 
-columns = ["claim_id", "report_section", "claim", "artifact_path", "exact_locator",
-           "collection_time_utc", "sha256", "proves", "does_not_prove", "confidence",
-           "alternative_considered", "disposition"]
+columns = [
+    "claim_id",
+    "report_section",
+    "claim",
+    "artifact_path",
+    "exact_locator",
+    "collection_time_utc",
+    "sha256",
+    "proves",
+    "does_not_prove",
+    "confidence",
+    "alternative_considered",
+    "disposition",
+]
 
-with (ROOT / "evidence-index.csv").open("w", newline="", encoding="utf-8") as handle:
+with (ROOT / "evidence-index.csv").open(
+    "w", newline="", encoding="utf-8"
+) as handle:
     writer = csv.writer(handle, lineterminator="\n")
     writer.writerow(columns)
+
     for cid, section, claim, path, locator, proves, not_proves, conf, alt, disp in CLAIMS:
         artefact = ROOT / path
-        writer.writerow([cid, section, claim, path, locator, collected(artefact),
-                         sha256(artefact), proves, not_proves, conf, alt, disp])
+        writer.writerow([
+            cid,
+            section,
+            claim,
+            path,
+            locator,
+            collected(artefact),
+            sha256(artefact),
+            proves,
+            not_proves,
+            conf,
+            alt,
+            disp,
+        ])
 
 print(f"wrote evidence-index.csv with {len(CLAIMS)} claims, all hashes computed")

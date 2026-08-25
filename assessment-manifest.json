@@ -39,7 +39,7 @@
       "risk-model/output/risk-model-results.json": "A089D66BE833BB137A49C4B45CA527786B2F4D536ACDB57A19AC557D503A4EE3",
       "risk-model/output/sensitivity.json": "727BB3D719A26B3A0A5D1D4ED1380332D165F5A5E32F1235A51FE186BD5BB198",
       "risk-model/output/treatment-selection.json": "FDA322ED387FAB4D0BB4F061C528F696EED3C884F76ADC19E8067F98EE58A1BF",
-      "service-results.xml": "CE4CA8B6A642623591F2BE049E3ACAE432F9FABC7AE0D2BABB30AC50096DF599"
+      "service-results.xml": "15ED5B8C96D384871746294C84651FCDEC50E842A2C7D88971F9F2CDB104ABCB"
     }
   },
   "inputs": [
@@ -66,5 +66,6 @@
   ],
   "known_limitations": [
     "The hardening assessment demonstrates measurable security improvement on the supplied Rocky Linux host and declared service contract, but it does not establish full CIS compliance. OpenSCAP still reports failed rules after remediation, and the brief requires the known false positive and service-conflicting remediation to be treated according to their documented dispositions rather than blindly remediated.",
-  "The host acceptance evidence is bounded by the supplied service contract and acceptance suite. Passing the 57 acceptance tests demonstrates preservation of the declared services and controls tested by the suite, but does not prove that every possible application workload or configuration outside that contract is unaffected.",
+    "The host acceptance evidence is bounded by the supplied service contract and acceptance suite. Passing the 57 acceptance tests demonstrates preservation of the declared services and controls tested by the suite, but does not prove that every possible application workload or configuration outside that contract is unaffected."
   ]
+}

@@ -1,0 +1,262 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ubi.local/grc-a4/control-schema/remediation.schema.json",
+  "title": "GRC-A4 Hardening Remediation",
+  "description": "Schema for declarative hardening remediation controls.",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "remediations"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string"
+    },
+    "baseline": {
+      "type": "object",
+      "properties": {
+        "oscap_fail": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "oscap_pass": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "oscap_notapplicable": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "oscap_error": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "lynis_hardening_index": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "lynis_suggestions": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "prechecks_verified_utc": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "remediations": {
+      "type": "array",
+      "minItems": 8,
+      "items": {
+        "$ref": "#/$defs/remediation"
+      }
+    },
+    "false_positives": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/falsePositive"
+      }
+    },
+    "candidates_reviewed_and_excluded": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "rule",
+          "reason"
+        ],
+        "properties": {
+          "rule": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "design_corrections": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "entry",
+          "correction"
+        ],
+        "properties": {
+          "entry": {
+            "type": "string"
+          },
+          "correction": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "$defs": {
+    "scannerReference": {
+      "oneOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1
+        }
+      ]
+    },
+    "remediation": {
+      "type": "object",
+      "required": [
+        "id",
+        "finding",
+        "scanner_ref",
+        "verified_baseline",
+        "desired_state",
+        "verify_precheck",
+        "change",
+        "rollback",
+        "acceptance_test",
+        "expected_scanner_effect"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^HR-[0-9]{3}$"
+        },
+        "finding": {
+          "type": "string",
+          "minLength": 1
+        },
+        "planted_defect": {
+          "type": "boolean"
+        },
+        "service_conflict": {
+          "type": "boolean"
+        },
+        "scanner_ref": {
+          "type": "object",
+          "minProperties": 1,
+          "additionalProperties": {
+            "$ref": "#/$defs/scannerReference"
+          }
+        },
+        "rule_rationale": {
+          "type": "string"
+        },
+        "source": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "minItems": 1
+            }
+          ]
+        },
+        "verified_baseline": {
+          "type": "string",
+          "minLength": 1
+        },
+        "desired_state": {
+          "type": "string",
+          "minLength": 1
+        },
+        "verify_precheck": {
+          "type": "string",
+          "minLength": 1
+        },
+        "change": {
+          "type": "string",
+          "minLength": 1
+        },
+        "handler": {
+          "type": "string"
+        },
+        "service_risk": {
+          "type": "string",
+          "minLength": 1
+        },
+        "parameters": {
+          "type": "object"
+        },
+        "rollback": {
+          "type": "string",
+          "minLength": 1
+        },
+        "acceptance_test": {
+          "type": "string",
+          "minLength": 1
+        },
+        "expected_scanner_effect": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "falsePositive": {
+      "type": "object",
+      "required": [
+        "id",
+        "scanner_ref",
+        "title",
+        "scan_result",
+        "analysis",
+        "why_no_parameterisation",
+        "disposition",
+        "expected_after_scan",
+        "acceptance_test",
+        "evidence"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "scanner_ref": {
+          "type": "object"
+        },
+        "title": {
+          "type": "string"
+        },
+        "scan_result": {
+          "type": "string"
+        },
+        "rule_rationale": {
+          "type": "string"
+        },
+        "analysis": {
+          "type": "string"
+        },
+        "why_no_parameterisation": {
+          "type": "string"
+        },
+        "disposition": {
+          "const": "NOT REMEDIATED"
+        },
+        "expected_after_scan": {
+          "type": "string"
+        },
+        "acceptance_test": {
+          "type": "string"
+        },
+        "evidence": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

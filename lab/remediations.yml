@@ -207,16 +207,15 @@ remediations:
     source:
       - /etc/issue
       - /etc/issue.net
-    desired_state: both files carry an authorised-use banner
+    verified_baseline: "Verified against the baseline evidence: /etc/issue and /etc/issue.net do not contain the required authorised-use warning banner."
+    desired_state: "both files carry an authorised-use banner"
     verify_precheck: "cat /etc/issue /etc/issue.net"
-    change: template both files from one variable
-    handler: none
-    service_risk: >
-      None. The banner is displayed pre-authentication and does not alter
-      sshd's effective port or any declared check.
-    rollback: restore baseline contents
-    acceptance_test: test_login_banners_present
-    expected_scanner_effect: both banner rules move fail -> pass
+    change: "template both files from one variable"
+    handler: "none"
+    service_risk: "None. The banner is displayed pre-authentication and does not alter sshd's effective port or any declared check."
+    rollback: "restore baseline contents"
+    acceptance_test: "test_login_banners_present"
+    expected_scanner_effect: "both banner rules move fail -> pass"
 
   - id: HR-010
     finding: Default umask too permissive
@@ -354,3 +353,4 @@ design_corrections:
       firewalld is already installed and active. Removed the installation step
       and the nftables interaction concern; the change is zone assignment and
       rich rules only.
+

@@ -1,0 +1,37 @@
+{
+  "stage": "Stage 8",
+  "artifact": "security-results.json",
+  "host": "nf-grc-a4-rocky",
+  "marker": "UBI-A8-0725D08E95BE",
+  "scan": {
+    "tool": "OpenSCAP",
+    "results_file": "after/oscap-results.xml",
+    "stdout_file": "after/oscap-stdout.txt",
+    "status": "COMPLETED",
+    "result_interpretation": "Targeted hardening delta evidence; not a claim that the complete Rocky Linux benchmark passes."
+  },
+  "service_acceptance": {
+    "result": "PASS",
+    "tests_collected": 57,
+    "tests_passed": 57,
+    "tests_failed": 0,
+    "source": "service-results.xml"
+  },
+  "hardening_evidence": {
+    "before_directory": "before/",
+    "after_directory": "after/",
+    "delta_evidence": "after/delta-reconciliation.txt",
+    "oscap_results": "after/oscap-results.xml",
+    "oscap_stdout": "after/oscap-stdout.txt",
+    "lynis_report": "after/lynis-report.txt"
+  },
+  "security_scan": {
+    "results_available": true,
+    "interpretation": "OpenSCAP output contains pass, fail, and not-applicable rule results. Existing findings are retained as scanner evidence and are not relabelled as remediation failures unless directly related to the targeted Stage 8 controls."
+  },
+  "acceptance": {
+    "service_tests": "PASS",
+    "security_evidence_present": true,
+    "overall_artifact_status": "COMPLETE"
+  }
+}

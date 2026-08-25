@@ -1,0 +1,44 @@
+{
+  "stage": "Stage 8",
+  "artifact": "idempotence.json",
+  "host": "nf-grc-a4-rocky",
+  "marker": "UBI-A8-0725D08E95BE",
+  "source_log": "idempotence.log",
+  "lifecycle_result": "PASS",
+  "failed_stages": 0,
+  "initial_apply": {
+    "result": "PASS",
+    "changed_tasks": 0
+  },
+  "second_apply": {
+    "result": "PASS",
+    "changed_tasks": 0,
+    "idempotent": true
+  },
+  "hardened_service_tests": {
+    "result": "PASS",
+    "tests_passed": 57
+  },
+  "rollback": {
+    "result": "PASS",
+    "changed_tasks": 14
+  },
+  "reapply": {
+    "result": "PASS",
+    "changed_tasks": 12
+  },
+  "second_reapply": {
+    "result": "PASS",
+    "changed_tasks": 0,
+    "idempotent": true
+  },
+  "final_acceptance": {
+    "result": "PASS",
+    "tests_passed": 57,
+    "service_results_file": "service-results.xml"
+  },
+  "evidence": {
+    "log": "idempotence.log",
+    "service_results": "service-results.xml"
+  }
+}

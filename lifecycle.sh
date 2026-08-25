@@ -135,7 +135,7 @@ is_number() { [[ "$1" =~ ^[0-9]+$ ]]; }
 record "Stage 8 unattended lifecycle"
 record "Started:  $(stamp)"
 record "Host:     $(hostname)"
-record "OS:       $(grep PRETTY_NAME /etc/os-release | cut -d'\"' -f2)"
+record "OS:       $(sed -n 's/^PRETTY_NAME="\(.*\)"$/\1/p' /etc/os-release)"
 record "Marker:   $(curl --fail --silent http://127.0.0.1:8080/ 2>/dev/null || echo UNAVAILABLE)"
 record "Ansible:  $(ansible --version | head -1)"
 record "Pytest:   $(python3 -m pytest --version 2>&1 | head -1)"
@@ -168,7 +168,7 @@ fi
 # --- 4. Service tests on the hardened host ---------------------------------
 banner "4/8 service tests (hardened)"
 run_contract
-if (cd "$PROJECT" && python3 -m pytest molecule-or-testinfra/ -q >>"$LOG" 2>&1); then
+if (cd "$PROJECT" && python3 -m pytest tests/ -q >>"$LOG" 2>&1); then
   pass "acceptance suite green on hardened host"
 else
   fail "acceptance suite failed on hardened host"
@@ -247,7 +247,7 @@ run_contract
 
 # --- 8. Final acceptance suite ---------------------------------------------
 banner "8/8 final acceptance suite"
-if (cd "$PROJECT" && python3 -m pytest molecule-or-testinfra/ -q \
+if (cd "$PROJECT" && python3 -m pytest tests/ -q \
       --junitxml="${PROJECT}/service-results.xml" >>"$LOG" 2>&1); then
   pass "acceptance suite green, service-results.xml regenerated"
 else

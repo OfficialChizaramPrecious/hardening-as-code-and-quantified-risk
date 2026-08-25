@@ -25,7 +25,7 @@
   tags: [hr-001, hr-002, ssh]
 
 # ---------------------------------------------------------------------------
-# HR-003 - Web content permissions  (parameterised, service-critical)
+# HR-003 - Web content permissions (parameterised, service-critical)
 # ---------------------------------------------------------------------------
 - name: HR-003 - set web root ownership and mode
   ansible.builtin.file:
@@ -109,6 +109,16 @@
   when: netforge_apply_sysctl | bool
   tags: [hr-005, hr-006, hr-007, hr-008, sysctl]
 
+- name: HR-005/006/007/008 - enforce persisted sysctl file ownership and mode
+  ansible.builtin.file:
+    path: "{{ netforge_sysctl_file }}"
+    owner: root
+    group: root
+    mode: "0640"
+  become: true
+  when: netforge_apply_sysctl | bool
+  tags: [hr-005, hr-006, hr-007, hr-008, sysctl]
+
 # ---------------------------------------------------------------------------
 # HR-009 - Login banners
 # ---------------------------------------------------------------------------
@@ -140,7 +150,7 @@
   tags: [hr-010, umask]
 
 # ---------------------------------------------------------------------------
-# HR-011 - Firewalld loopback handling  (SERVICE CONFLICT CONTROL)
+# HR-011 - Firewalld loopback handling (SERVICE CONFLICT CONTROL)
 # ---------------------------------------------------------------------------
 # Two-sided by design, per the benchmark's own remediation text:
 #   trust the lo interface, and drop traffic claiming a loopback SOURCE with a

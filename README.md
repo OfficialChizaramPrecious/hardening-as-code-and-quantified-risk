@@ -6,13 +6,13 @@ Submission package for UBI Advanced Project 4.
 |---|---|
 | Intern | UBI-2026-0099 |
 | Track | GRC |
-| Private assignment set | **D5** |
+| Private assignment set | v5 |
 | Evidence marker | **UBI-A8-0725D08E95BE** |
 | Treatment budget | USD 85,000 |
 | Sensitivity band | ±30% on annual-loss ranges |
 
-**Assigned archive:** `grc-stage-8-shared-b1.tar.gz`, 11,977 bytes
-**SHA-256:** `9be5e36adc4d906f0fdac3b2a893da3bfb4b994e7423c0ee3cc320ca265e283b`
+**Assigned archive:** `grc-stage-8-shared-b2.tar.gz`, 11,977 bytes
+**SHA-256:** `d2d2e982b6a442a50ff989edab5e343b173eebd80414ca38e40b8b4864ffd332`
 
 Verified against the dashboard value before extraction. Preserved unmodified in
 `raw-evidence/`.
